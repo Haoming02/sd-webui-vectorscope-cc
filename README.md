@@ -1,7 +1,7 @@
 ﻿# SD Webui Vectorscope CC
 This is an Extension for the [Automatic1111 Webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui), which performs *~~some kind of~~ **Offset Noise***[*](#offset-noise-tldr) natively.
 
-***Note:** This Extension is the result of my numerous trial and error[*](#what-is-actually-under-the-hood). I have no idea how and why this works.* 💀
+**Note:** This Extension is the result of my numerous trial and error[*](#what-is-actually-under-the-hood). I have no idea how and why this works. 💀
 
 ## How to Use
 After installing this Extension, you will a new section in both **txt2img** and **img2img** tabs. 
@@ -46,8 +46,9 @@ Refer to the parameters and sample images below, and play around with the values
 ## Sample Images
 - **Checkpoint:** [UHD-23](https://civitai.com/models/22371/uhd-23)
 - **Pos. Prompt:** `(masterpiece, best quality), 1girl, solo, night, street, city, neon_lights`
-- **Neg. Prompt:** `(low quality, worst quality:1.2), `[`EasyNegative`](https://huggingface.co/datasets/gsdf/EasyNegative/tree/main)`, `[`EasyNegativeV2`](https://huggingface.co/gsdf/Counterfeit-V3.0/tree/main/embedding)
+- **Neg. Prompt:** `(low quality, worst quality:1.2)`, [`EasyNegative`](https://huggingface.co/datasets/gsdf/EasyNegative/tree/main), [`EasyNegativeV2`](https://huggingface.co/gsdf/Counterfeit-V3.0/tree/main/embedding)
 - `Euler a`; `20 steps`; `7.5 CFG`; `Hires. fix`; `Latent (nearest)`; `16 H.steps`; `0.6 D.Str.`; `Seed:`**`3814649974`**
+- No offset noise Checkpoints/LoRAs were used
 
 <p align="center"><b>Base</b><br>
 Extension <code>Disabled</code><br>
@@ -66,10 +67,12 @@ Extension <code>Disabled</code><br>
 <b>R:</b><code>-0.5</code>; <b>B:</b><code>1</code><br>
 <img src="samples/03.png" width=512></p>
 
-<p align="center"><b><s>Mexico Movie</s></b><br>
+<p align="center"><b><s>Mexican Movie</s></b><br>
 <b>Brightness:</b><code>3</code>; <b>Contrast:</b><code>-1.5</code>; <b>Saturation:</b><code>1</code><br>
 <b>R:</b><code>1</code>; <b>G:</b><code>0.5</code>; <b>B:</b><code>-2</code><br>
 <img src="samples/04.png" width=512></p>
+
+> Notice the significant difference even when using the same seed!
 
 ## Roadmap
 - [X] Extension Released
