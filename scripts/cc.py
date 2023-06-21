@@ -9,6 +9,16 @@ class VectorscopeCC(scripts.Script):
         global og_callback
         og_callback = KDiffusionSampler.callback_state
 
+        global xyz_grid
+        module_name = 'xyz_grid.py'
+        for data in scripts.scripts_data:
+            if data.script_class.__module__ == module_name and hasattr(data, "module"):
+                xyz_grid = data.module
+                break
+
+        self.xyzCache = {}
+        self.xyz_support()
+
     def title(self):
         return "Vectorscope Color Correction"
 
@@ -37,10 +47,67 @@ class VectorscopeCC(scripts.Script):
 
         return [enable, latent, bri, con, sat, early, r, g, b]
 
+    def xyz_support(self):
+        def apply_field(field):
+            def apply_field_(p, x, xs):
+                self.xyzCache.update({field : x})
+            return apply_field_
+
+        def choices_bool():
+            return ["False", "True"]
+
+        extra_axis_options = [
+            xyz_grid.AxisOption("[Vec.CC] Enable", str, apply_field("Enable"), choices=choices_bool),
+            xyz_grid.AxisOption("[Vec.CC] Alt.", str, apply_field("Alt"), choices=choices_bool),
+            xyz_grid.AxisOption("[Vec.CC] Brightness", float, apply_field("Brightness")),
+            xyz_grid.AxisOption("[Vec.CC] Contrast", float, apply_field("Contrast")),
+            xyz_grid.AxisOption("[Vec.CC] Saturation", float, apply_field("Saturation")),
+            xyz_grid.AxisOption("[Vec.CC] Skip", float, apply_field("Skip")),
+            xyz_grid.AxisOption("[Vec.CC] R", float, apply_field("R")),
+            xyz_grid.AxisOption("[Vec.CC] G", float, apply_field("G")),
+            xyz_grid.AxisOption("[Vec.CC] B", float, apply_field("B"))
+        ]
+
+        xyz_grid.axis_options.extend(extra_axis_options)
+
+    def parse_bool(self, string:str):
+        if string.lower() == "true":
+            return True
+        elif string.lower() == "false":
+            return False
+        else:
+            raise ValueError(f"Invalid Value: {string}")
+
     def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, early:float, r:float, g:float, b:float):
+        if 'Enable' in self.xyzCache.keys():
+            enable = self.parse_bool(self.xyzCache['Enable'])
+
         if not enable:
+            if len(self.xyzCache) > 0 and not 'Enable' in self.xyzCache.keys():
+                print('\n[Vec.CC] Extension is not Enabled!\n')
+            self.xyzCache.clear()
             setattr(KDiffusionSampler, "callback_state", og_callback)
             return p
+
+        for k, v in self.xyzCache.items():
+            if k == 'Alt':
+                latent = self.parse_bool(v)
+            elif k == 'Brightness':
+                bri = v
+            elif k == 'Contrast':
+                con = v
+            elif k == 'Saturation':
+                sat = v
+            elif k == 'Skip':
+                early = v
+            elif k == 'R':
+                r = v
+            elif k == 'G':
+                g = v
+            elif k == 'B':
+                b = v
+
+        self.xyzCache.clear()
 
         steps = p.steps
         if not hasattr(p, 'enable_hr') and hasattr(p, 'denoising_strength') and not shared.opts.img2img_fix_steps:
