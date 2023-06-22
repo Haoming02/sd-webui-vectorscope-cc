@@ -9,6 +9,8 @@ Refer to the parameters and sample images below, and play around with the values
 
 **Note:** Since this modifies the underlying latent noise, the composition may change drastically.
 
+**Note:** Due to some scaling issues, low steps *(`< 10`)* makes the effects stronger 
+
 #### Parameters
 - **Enable:** Turn on & off this Extension
 - **Alt:** Modify an alternative Tensor. The effects are significantly stronger when this is **on**.
@@ -23,7 +25,14 @@ Refer to the parameters and sample images below, and play around with the values
 
 <p align="center"><img src="samples/Skip.jpg" width=384></p>
 
-> Notice the noises on the face
+> Notice the noises on the faces
+
+<h5><u>Advanced</u></h5>
+
+- **Process Hires. fix:** By default, this Extension only functions during the **txt2img** phase, so that **Hires. fix** can *fix* the noises introduced during **txt2img**. Enable this to process all the way.
+  - **Note:** This option does not affect **img2img**
+  - **Important:** Since I scale the effect by the `steps`, make sure your **txt2img** has higher `steps` than **Hires. fix** if you enable this
+- **Noise Settings:** Currently does **nothing** *(To be implemented)*
 
 ## Sample Images
 - **Checkpoint:** [UHD-23](https://civitai.com/models/22371/uhd-23)
@@ -60,7 +69,12 @@ Extension <code>Disabled</code><br>
 - [X] Extension Released
 - [X] Add Support for **X/Y/Z Plot**
     - I didn't add a value cap, you can experiment with some really wild values with this
+- [ ] Add Support for **Inpaint**
 - [ ] Append Parameters onto Metadata
+
+## Known Issues
+- Does not work with `DDIM` sampler
+- Has little effect when used with certain **LoRAs**
 
 <hr>
 
