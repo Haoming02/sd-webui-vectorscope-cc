@@ -125,7 +125,7 @@ class VectorscopeCC(scripts.Script):
         if not hasattr(p, 'enable_hr') and hasattr(p, 'denoising_strength') and not shared.opts.img2img_fix_steps:
             steps = int(steps * p.denoising_strength)
 
-        stop = steps * (1 - early)
+        stop = steps * (1.0 - early)
 
         if stop < 1:
             return p
@@ -187,6 +187,9 @@ class VectorscopeCC(scripts.Script):
 
         setattr(KDiffusionSampler, "callback_state", callback_state)
         return p
+
+    def postprocess_image(self, p, *args):
+        del p.hr_pass
 
     def postprocess(self, p, processed, *args):
         setattr(KDiffusionSampler, "callback_state", og_callback)
