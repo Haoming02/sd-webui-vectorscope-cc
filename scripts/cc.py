@@ -189,7 +189,8 @@ class VectorscopeCC(scripts.Script):
         return p
 
     def postprocess_image(self, p, *args):
-        del p.hr_pass
+        if hasattr(p, 'hr_pass'):
+            del p.hr_pass
 
     def postprocess(self, p, processed, *args):
         setattr(KDiffusionSampler, "callback_state", og_callback)
