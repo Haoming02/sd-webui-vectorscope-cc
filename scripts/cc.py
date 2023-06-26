@@ -3,9 +3,21 @@ import modules.scripts as scripts
 from modules import shared
 import gradio as gr
 import torch
+import json
+
+def clean_outdated(EXT_NAME:str):
+    with open(scripts.basedir() + '/' + 'ui-config.json', 'r') as json_file:
+        configs = json.loads(json_file.read())
+
+    cleaned_configs = {key: value for key, value in configs.items() if EXT_NAME not in key}
+
+    with open(scripts.basedir() + '/' + 'ui-config.json', 'w') as json_file:
+        json.dump(cleaned_configs, json_file)
 
 class VectorscopeCC(scripts.Script):
     def __init__(self):
+        clean_outdated('cc.py')
+
         global og_callback
         og_callback = KDiffusionSampler.callback_state
 
@@ -21,12 +33,12 @@ class VectorscopeCC(scripts.Script):
 
     def xyz_support(self):
         def apply_field(field):
-            def apply_field_(p, x, xs):
+            def _(p, x, xs):
                 self.xyzCache.update({field : x})
-            return apply_field_
+            return _
 
         def choices_bool():
-            return ["False", "True"]
+            return ["True", "False"]
 
         def choices_method():
             return ["Default", "Uniform", "Cross", "Random", "Multi-Res"]
@@ -34,15 +46,15 @@ class VectorscopeCC(scripts.Script):
         extra_axis_options = [
             xyz_grid.AxisOption("[Vec.CC] Enable", str, apply_field("Enable"), choices=choices_bool),
             xyz_grid.AxisOption("[Vec.CC] Alt.", str, apply_field("Alt"), choices=choices_bool),
+            xyz_grid.AxisOption("[Vec.CC] Skip", float, apply_field("Skip")),
             xyz_grid.AxisOption("[Vec.CC] Brightness", float, apply_field("Brightness")),
             xyz_grid.AxisOption("[Vec.CC] Contrast", float, apply_field("Contrast")),
             xyz_grid.AxisOption("[Vec.CC] Saturation", float, apply_field("Saturation")),
-            xyz_grid.AxisOption("[Vec.CC] Skip", float, apply_field("Skip")),
             xyz_grid.AxisOption("[Vec.CC] R", float, apply_field("R")),
             xyz_grid.AxisOption("[Vec.CC] G", float, apply_field("G")),
             xyz_grid.AxisOption("[Vec.CC] B", float, apply_field("B")),
-            xyz_grid.AxisOption("[Vec.CC] Proc. H.Fix", str, apply_field("DoHR"), choices=choices_bool),
-            xyz_grid.AxisOption("[Vec.CC] Method", str, apply_field("Method"), choices=choices_method)
+            xyz_grid.AxisOption("[Adv.CC] Proc. H.Fix", str, apply_field("DoHR"), choices=choices_bool),
+            xyz_grid.AxisOption("[Adv.CC] Method", str, apply_field("Method"), choices=choices_method)
         ]
 
         xyz_grid.axis_options.extend(extra_axis_options)
@@ -56,24 +68,22 @@ class VectorscopeCC(scripts.Script):
     def ui(self, is_img2img):
         with gr.Accordion("Vectorscope CC", open=False):
 
-            with gr.Row() as basics:
+            with gr.Row():
                 enable = gr.Checkbox(label="Enable")
                 latent = gr.Checkbox(label="Alt.")
+                early = gr.Slider(label="Skip", minimum=0.0, maximum=1.0, step=0.1, value=0.0)
 
-            with gr.Row() as BnC:
-                bri = gr.Slider(label="Brightness", minimum=-5.0, maximum=5.0, step=0.05, value=0.0)
-                con = gr.Slider(label="Contrast", minimum=-2.0, maximum=2.0, step=0.05, value=0.0)
+            with gr.Row():
+                bri = gr.Slider(label="Brightness", minimum=-5.0, maximum=5.0, step=0.1, value=0.0)
+                con = gr.Slider(label="Contrast", minimum=0.5, maximum=1.5, step=0.05, value=1.0)
+                sat = gr.Slider(label="Saturation", minimum=0.5, maximum=1.5, step=0.05, value=1.0)
 
-            with gr.Row() as SS:
-                sat = gr.Slider(label="Saturation", minimum=-2.0, maximum=2.0, step=0.05, value=0.0)
-                early = gr.Slider(label="Skip", minimum=0.0, maximum=1.0, step=0.05, value=0.1)
+            with gr.Row():
+                r = gr.Slider(label="R", info='Cyan | Red', minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
+                g = gr.Slider(label="G", info='Magenta | Green',minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
+                b = gr.Slider(label="B", info='Yellow | Blue',minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
 
-            with gr.Row() as RGB:
-                r = gr.Slider(label="R", info='Cyan | Red', minimum=-2.0, maximum=2.0, step=0.05, value=0.0)
-                g = gr.Slider(label="G", info='Magenta | Green',minimum=-2.0, maximum=2.0, step=0.05, value=0.0)
-                b = gr.Slider(label="B", info='Yellow | Blue',minimum=-2.0, maximum=2.0, step=0.05, value=0.0)
-
-            with gr.Accordion("Advanced", open=False):
+            with gr.Accordion("Advanced Settings", open=False):
                 doHR = gr.Checkbox(label="Process Hires. fix")
                 method = gr.Radio(["Default", "Uniform", "Cross", "Random", "Multi-Res"], label="Noise Settings", value="Default")
 
@@ -82,20 +92,22 @@ class VectorscopeCC(scripts.Script):
     def parse_bool(self, string:str):
         if string.lower() == "true":
             return True
-        elif string.lower() == "false":
+        if string.lower() == "false":
             return False
-        else:
-            raise ValueError(f"Invalid Value: {string}")
+        
+        raise ValueError(f"Invalid Value: {string}")
 
     def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, early:float, r:float, g:float, b:float, doHR:bool, method:str):
         if 'Enable' in self.xyzCache.keys():
             enable = self.parse_bool(self.xyzCache['Enable'])
 
         if not enable:
-            if len(self.xyzCache) > 0 and not 'Enable' in self.xyzCache.keys():
-                print('\n[Vec.CC] Extension is not Enabled!\n')
-            self.xyzCache.clear()
-            setattr(KDiffusionSampler, "callback_state", og_callback)
+            if 'Enable' not in self.xyzCache.keys():
+                if len(self.xyzCache) > 0:
+                    print('\n\n[X/Y/Z Plot] x [Vec.CC] Extension is not Enabled!\n\n')
+                self.xyzCache.clear()
+
+            KDiffusionSampler.callback_state = og_callback
             return p
 
         for k, v in self.xyzCache.items():
@@ -118,6 +130,8 @@ class VectorscopeCC(scripts.Script):
                     b = v
                 case 'DoHR':
                     doHR = self.parse_bool(v)
+                case 'Method':
+                    print('This setting currently does nothing!')
 
         self.xyzCache.clear()
 
@@ -131,8 +145,8 @@ class VectorscopeCC(scripts.Script):
             return p
 
         bri /= steps
-        con = 1.0 + con / steps
-        sat = 1.0 + sat / steps
+        con = pow(con, 1.0 / steps)
+        sat = pow(sat, 1.0 / steps)
         r /= steps
         g /= steps
         b /= steps
@@ -160,7 +174,7 @@ class VectorscopeCC(scripts.Script):
 
                     if p.hr_pass == 2:
                         return og_callback(self, d)
-            
+
             if d["i"] > stop:
                 return og_callback(self, d)
 
@@ -175,9 +189,9 @@ class VectorscopeCC(scripts.Script):
                 BRIGHTNESS += torch.abs(BRIGHTNESS) * bri
                 BRIGHTNESS *= con
 
-                R -= r
-                G += g
-                B -= b
+                R -= torch.abs(R) * r
+                G += torch.abs(G) * g
+                B -= torch.abs(B) * b
 
                 R *= sat
                 G *= sat
@@ -185,7 +199,7 @@ class VectorscopeCC(scripts.Script):
 
             return og_callback(self, d)
 
-        setattr(KDiffusionSampler, "callback_state", callback_state)
+        KDiffusionSampler.callback_state = callback_state
         return p
 
     def postprocess_image(self, p, *args):
@@ -193,4 +207,4 @@ class VectorscopeCC(scripts.Script):
             del p.hr_pass
 
     def postprocess(self, p, processed, *args):
-        setattr(KDiffusionSampler, "callback_state", og_callback)
+        KDiffusionSampler.callback_state = og_callback
