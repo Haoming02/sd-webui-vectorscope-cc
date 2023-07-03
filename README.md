@@ -9,20 +9,19 @@ refer to the parameters and sample images below and play around with the values.
 
 **Note:** Since this modifies the underlying latent noise, the composition may change drastically.
 
-**Note:** Due to my scaling implementations, lower steps *(`< 10`)* causes the effects to be way stronger 
-
 #### Parameters
 - **Enable:** Turn on & off this Extension
-- **Alt:** Modify an alternative Tensor instead. The effects are significantly stronger when this is enabled.
+- **Alt:** Modify an alternative Tensor instead, causing the effects to be significantly stronger
+- **Skip:** Skip the last percentage of steps and only process the first few steps
+
+<p align="center"><img src="samples/Skip.jpg" width=512></p>
+<p align="center">When <code>Alt.</code> is enabled, the image can get distorted at high value<br>Increase <code>Skip</code> to still achieve a stronger effect but without distortion</p>
+
 - **Brightness:** Adjust the overall brightness of the image
 - **Contrast:** Adjust the overall contrast of the image
 - **Saturation:** Adjust the overall saturation of the image
-- **Skip:** Skip the last few percentage of steps and only process the first few
 
-<p align="center"><img src="samples/Skip.jpg" width=512></p>
-<p align="center"><i>Notice the noises on the faces</i></p>
-
-##### Color Channels
+#### Color Channels
 <table>
     <thead align="center">
         <tr>
@@ -50,50 +49,73 @@ refer to the parameters and sample images below and play around with the values.
     </tbody>
 </table>
 
-##### Advanced Settings
+#### Advanced Settings
 
 - **Process Hires. fix:** By default, this Extension only functions during the **txt2img** phase, so that **Hires. fix** may "fix" the artifacts introduced during **txt2img**. Enable this to process **Hires. fix** phase too.
   - This option does not affect **img2img**
-  - **Note:** Make sure your **txt2img** has higher `steps` than **Hires. fix** if you enable this
-- **Noise Settings:** Currently does **nothing** *(To be implemented...)*
+  - **Note:** Keep the **txt2img** base `steps` higher than **Hires. fix** `steps` if you enable this
+
+##### Noise Settings
+> let `x` denote the Tensor ; let `y` denote the operations
+
+<!-- "Straight", "Straight Abs.", "Cross", "Cross Abs.", "Ones", "N.Random", "U.Random", "Multi-Res", "Multi-Res Abs." -->
+
+- **Straight:** All operations are calculated on the same Tensor
+  - `x += x * y`
+- **Cross:** All operations are calculated on the Tensor opposite of the `Alt.` setting
+  - `x += x' * y`
+- **Ones:** All operations are calculated on a Tensor filled with ones 
+  - `x += 1 * y` 
+- **N.Random:** All operations are calculated on a Tensor filled with random values from normal distribution 
+  - `x += randn() * y`
+- **U.Random:** All operations are calculated on a Tensor filled with random values from uniform distribution
+  - `x += rand() * y`
+- **Multi-Res:** All operations are calculated on a Tensor generated with multi-res noise algorithm
+  - `x += multires() * y`
+- **Abs.:** Calculate using the absolute values of the chosen Tensors instead
+  - `x += abs(F) * y`
+
+<p align="center"><img src="samples/Bright.jpg" width=768></p>
+<p align="center"><img src="samples/Dark.jpg" width=768></p>
+
 
 ## Sample Images
 - **Checkpoint:** [UHD-23](https://civitai.com/models/22371/uhd-23)
 - **Pos. Prompt:** `(masterpiece, best quality), 1girl, solo, night, street, city, neon_lights`
 - **Neg. Prompt:** `(low quality, worst quality:1.2)`, [`EasyNegative`](https://huggingface.co/datasets/gsdf/EasyNegative/tree/main), [`EasyNegativeV2`](https://huggingface.co/gsdf/Counterfeit-V3.0/tree/main/embedding)
 - `Euler a`; `20 steps`; `7.5 CFG`; `Hires. fix`; `Latent (nearest)`; `16 H.steps`; `0.6 D.Str.`; `Seed:`**`3814649974`**
-- *No offset noise models were used*
+- `Straight Abs.`
 
 <p align="center">
 <b>Base</b><br>
 <code>Extension Disabled</code><br>
-<img src="samples/00.png" width=512>
+<img src="samples/00.jpg" width=512>
 </p>
 
 <p align="center">
 <b>Dark</b><br>
-<code><b>Brightness:</b> -2; <b>Contrast:</b> 1</code><br>
-<img src="samples/01.png" width=512>
+<code><b>Brightness:</b> -3; <b>Contrast:</b> 1.5</code><br>
+<img src="samples/01.jpg" width=512>
 </p>
 
 <p align="center">
 <b>Bright</b><br>
-<code><b>Brightness:</b> 1; <b>Contrast:</b> -0.5; <b>Alt:</b> Enabled</code><br>
-<img src="samples/02.png" width=512>
+<code><b>Brightness:</b> 2.5; <b>Contrast:</b> 0.5; <b>Alt:</b> Enabled</code><br>
+<img src="samples/02.jpg" width=512>
 </p>
 
 <p align="center">
 <b>Chill</b><br>
-<code><b>Brightness:</b> -2.5; <b>Contrast:</b> 1.5</code><br>
-<code><b>R:</b> -0.5; <b>B:</b> 1</code><br>
-<img src="samples/03.png" width=512>
+<code><b>Brightness:</b> -2.5; <b>Contrast:</b> 1.25</code><br>
+<code><b>R:</b> -1.5; <b>B:</b> 2.5</code><br>
+<img src="samples/03.jpg" width=512>
 </p>
 
 <p align="center">
 <b><s>Mexican Movie</s></b><br>
-<code><b>Brightness:</b> 3; <b>Contrast:</b> -1.5; <b>Saturation:</b> 1</code><br>
-<code><b>R:</b> 1; <b>G:</b> 0.5; <b>B:</b> -2</code><br>
-<img src="samples/04.png" width=512>
+<code><b>Brightness:</b> 3; <b>Saturation:</b> 1.5</code><br>
+<code><b>R:</b> 2; <b>G:</b> 1; <b>B:</b> -2</code><br>
+<img src="samples/04.jpg" width=512>
 </p>
 
 <p align="center"><i>Notice the significant differences even when using the same seed</i></p>
@@ -101,21 +123,23 @@ refer to the parameters and sample images below and play around with the values.
 ## Roadmap
 - [X] Extension Released
 - [X] Add Support for **X/Y/Z Plot**
-- [ ] Add Support for **Inpaint**
-- [ ] Implement different Noise functions
-- [ ] Implement better scaling algorithm
-- [ ] Add Gradient feature
+- [X] Implement different Noise functions
+- [ ] Add Randomize functions
+- [ ] Implement a better scaling algorithm
 - [ ] Fix the Brightness issues
+- [ ] Add Support for **Inpaint**
+- [ ] Add Gradient feature
 - [ ] Append Parameters onto Metadata
 
-<p align="center"><img src="samples/XYZ.jpg" width=512></p>
-<p align="center"><code><b>X/Y/Z Plot</b> Support</code></p>
+<p align="center"><img src="samples/XYZ.jpg" width=768></p>
+<p align="center"><code>X/Y/Z Plot Support</code></p>
 
 ## Known Issues
 - Does not work with `DDIM` sampler
 - Has little effect when used with certain **LoRA**s
 - Too high **Brightness** causes the image to be blurry; Too low **Brightness** causes the image to be noisy
-- Values too extreme can cause distortions
+  - Using `Multi-Res` seems to fix the blurry issue *(but not the noise issue)*
+- Low `steps` *(`< 10`)* may cause the effects to be stronger due to poor scaling algorithm
 
 <hr>
 
@@ -138,11 +162,11 @@ After reading through and messing around with the code,
 I found out that it is possible to directly modify the Tensors 
 representing the latent noise used by the Stable Diffusion process.
 
-The dimentions of the Tensors is `(X, 4, H / 8, W / 8)`, which can be thought of like this:
+The dimensions of the Tensors is `(X, 4, H / 8, W / 8)`, which can be thought of like this:
 
 > **X** batch of noise images, with **4** channels, each with **(W / 8) x (H / 8)** values
 
-> **eg.** Generating a 512x768 image will create a Tensor of size (1, 4, 96, 64)
+> **eg.** Generating a single 512x768 image will create a Tensor of size (1, 4, 96, 64)
 
 Then, I tried to play around with the values of each channel and ended up discovering these relationships.
 Essentially, the 4 channels correspond to the **CMYK** color format, 
