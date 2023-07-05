@@ -94,7 +94,8 @@ class VectorscopeCC(scripts.Script):
             xyz_grid.AxisOption("[Vec.CC] G", float, apply_field("G")),
             xyz_grid.AxisOption("[Vec.CC] B", float, apply_field("B")),
             xyz_grid.AxisOption("[Adv.CC] Proc. H.Fix", str, apply_field("DoHR"), choices=choices_bool),
-            xyz_grid.AxisOption("[Adv.CC] Method", str, apply_field("Method"), choices=choices_method)
+            xyz_grid.AxisOption("[Adv.CC] Method", str, apply_field("Method"), choices=choices_method),
+            xyz_grid.AxisOption("[Adv.CC] Randomize", int, apply_field("Random"))
         ]
 
         xyz_grid.axis_options.extend(extra_axis_options)
@@ -127,7 +128,30 @@ class VectorscopeCC(scripts.Script):
                 doHR = gr.Checkbox(label="Process Hires. fix")
                 method = gr.Radio(["Straight", "Straight Abs.", "Cross", "Cross Abs.", "Ones", "N.Random", "U.Random", "Multi-Res", "Multi-Res Abs."], label="Noise Settings", value="Straight Abs.")
 
+            with gr.Row():
+                reset_btn = gr.Button(value="Reset")
+                self.register_reset(reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method)
+
+                random_btn = gr.Button(value="Randomize")
+                self.register_random(random_btn, bri, con, sat, r, g, b)
+
         return [enable, latent, bri, con, sat, early, r, g, b, doHR, method]
+
+    def register_reset(self, reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method):
+        for component in [enable, latent, doHR]:
+            reset_btn.click(fn=lambda x: gr.update(value=False), outputs=component)
+        for component in [early, bri, r, g, b]:
+            reset_btn.click(fn=lambda x: gr.update(value=0.0), outputs=component)
+        for component in [con, sat]:
+            reset_btn.click(fn=lambda x: gr.update(value=1.0), outputs=component)
+
+        reset_btn.click(fn=lambda x: gr.update(value='Straight Abs.'), outputs=method)
+
+    def register_random(self, random_btn, bri, con, sat, r, g, b):
+        for component in [bri, r, g, b]:
+            random_btn.click(fn=lambda x: gr.update(value=round(random.uniform(-2.5, 2.5), 2)), outputs=component)
+        for component in [con, sat]:
+            random_btn.click(fn=lambda x: gr.update(value=round(random.uniform(0.5, 1.5), 2)), outputs=component)
 
     def parse_bool(self, string:str):
         if string.lower() == "true":
@@ -149,6 +173,13 @@ class VectorscopeCC(scripts.Script):
 
             KDiffusionSampler.callback_state = og_callback
             return p
+
+        if 'Random' in self.xyzCache.keys():
+            print('\n\n[X/Y/Z Plot] x [Vec.CC] Randomize is Enabled!')
+            if len(self.xyzCache) > 1:
+                print('Some settings will not apply!')
+
+        cc_seed = None
 
         for k, v in self.xyzCache.items():
             match k:
@@ -172,6 +203,8 @@ class VectorscopeCC(scripts.Script):
                     doHR = self.parse_bool(v)
                 case 'Method':
                     method = v
+                case 'Random':
+                    cc_seed = v
 
         self.xyzCache.clear()
 
@@ -184,6 +217,25 @@ class VectorscopeCC(scripts.Script):
             steps = int(steps * p.denoising_strength)
 
         stop = steps * (1.0 - early)
+
+        if not cc_seed == None:
+            random.seed(cc_seed)
+
+            bri = round(random.uniform(-2.5, 2.5), 2)
+            r = round(random.uniform(-2.5, 2.5), 2)
+            g = round(random.uniform(-2.5, 2.5), 2)
+            b = round(random.uniform(-2.5, 2.5), 2)
+
+            con = round(random.uniform(0.5, 1.5), 2)
+            sat = round(random.uniform(0.5, 1.5), 2)
+
+            print(f'-> Seed: {cc_seed}')
+            print(f'Brightness:\t{bri}')
+            print(f'Contrast:\t{con}')
+            print(f'Saturation:\t{sat}')
+            print(f'R:\t\t{r}')
+            print(f'G:\t\t{g}')
+            print(f'B:\t\t{b}\n')
 
         if stop < 1:
             return p

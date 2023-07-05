@@ -49,6 +49,10 @@ refer to the parameters and sample images below and play around with the values.
     </tbody>
 </table>
 
+#### Buttons
+- **Reset:** Revert all settings to the default values
+- **Randomize:** Randomize `Brightness`, `Contrast`, `Saturation`, `R`, `G`, `B`
+
 #### Advanced Settings
 
 - **Process Hires. fix:** By default, this Extension only functions during the **txt2img** phase, so that **Hires. fix** may "fix" the artifacts introduced during **txt2img**. Enable this to process **Hires. fix** phase too.
@@ -72,12 +76,11 @@ refer to the parameters and sample images below and play around with the values.
   - `x += rand() * y`
 - **Multi-Res:** All operations are calculated on a Tensor generated with multi-res noise algorithm
   - `x += multires() * y`
-- **Abs.:** Calculate using the absolute values of the chosen Tensors instead
+- **Abs:** Calculate using the absolute values of the chosen Tensors instead
   - `x += abs(F) * y`
 
 <p align="center"><img src="samples/Bright.jpg" width=768></p>
 <p align="center"><img src="samples/Dark.jpg" width=768></p>
-
 
 ## Sample Images
 - **Checkpoint:** [UHD-23](https://civitai.com/models/22371/uhd-23)
@@ -124,15 +127,20 @@ refer to the parameters and sample images below and play around with the values.
 - [X] Extension Released
 - [X] Add Support for **X/Y/Z Plot**
 - [X] Implement different Noise functions
-- [ ] Add Randomize functions
+- [X] Add Randomize functions
 - [ ] Implement a better scaling algorithm
 - [ ] Fix the Brightness issues
-- [ ] Add Support for **Inpaint**
 - [ ] Add Gradient feature
 - [ ] Append Parameters onto Metadata
+- [ ] Implement Color Picker / Color Wheel
+- [ ] Add Support for **Inpaint**
 
 <p align="center"><img src="samples/XYZ.jpg" width=768></p>
 <p align="center"><code>X/Y/Z Plot Support</code></p>
+
+<p align="center"><img src="samples/Random.jpg" width=768></p>
+<p align="center">For <b>Randomize</b> in <code>X/Y/Z Plot</code>, the value is used as the random seed<br>
+You can refer to the console to see the randomized values</p>
 
 ## Known Issues
 - Does not work with `DDIM` sampler
