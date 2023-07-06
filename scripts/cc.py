@@ -267,7 +267,7 @@ class VectorscopeCC(scripts.Script):
                 target = gaussian_noise(d[mode])
 
             if 'Abs' in method:
-                abs_cvt(target)
+                target = abs_cvt(target)
 
             batchSize = d[mode].size(0)
 
