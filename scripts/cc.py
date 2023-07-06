@@ -1,64 +1,19 @@
 from modules.sd_samplers_kdiffusion import KDiffusionSampler
 import modules.scripts as scripts
-from modules import devices
 from modules import shared
 import gradio as gr
 import random
-import torch
-import json
 
-VERSION = 'v1.2.0'
+from scripts.cc_version import *
+from scripts.cc_noise import *
+from scripts.cc_style import StyleManager
 
-def clean_outdated(EXT_NAME:str):
-    with open(scripts.basedir() + '/' + 'ui-config.json', 'r') as json_file:
-        configs = json.loads(json_file.read())
-
-    cleaned_configs = {key: value for key, value in configs.items() if EXT_NAME not in key}
-
-    with open(scripts.basedir() + '/' + 'ui-config.json', 'w') as json_file:
-        json.dump(cleaned_configs, json_file)
-        
-def ones(latent):
-    return torch.ones_like(latent)
-
-def gaussian_noise(latent):
-    return torch.rand_like(latent)
-
-def normal_noise(latent):
-    return torch.randn_like(latent)
-
-def multires_noise(latent, use_zero:bool, iterations=8, discount=0.4):
-    """
-    Reference: https://wandb.ai/johnowhitaker/multires_noise/reports/Multi-Resolution-Noise-for-Diffusion-Model-Training--VmlldzozNjYyOTU2
-    Credit: Kohya_SS
-    """
-    noise = torch.zeros_like(latent) if use_zero else ones(latent)
-
-    batchSize = noise.size(0)
-    height = noise.size(2)
-    width = noise.size(3)
-
-    device = devices.get_optimal_device()
-    upsampler = torch.nn.Upsample(size=(height, width), mode="bilinear").to(device)
-
-    for b in range(batchSize):
-        for i in range(iterations):
-            r = random.random() * 2 + 2
-
-            wn = max(1, int(width / (r**i)))
-            hn = max(1, int(height / (r**i)))
-
-            for c in range(4):
-                noise[b, c] += upsampler(torch.randn(1, 1, hn, wn).to(device))[0, 0] * discount**i
-
-            if wn == 1 or hn == 1:
-                break
-
-    return noise / noise.std()
+style_manager = StyleManager()
 
 class VectorscopeCC(scripts.Script):
     def __init__(self):
         clean_outdated('cc.py')
+        style_manager.load_styles()
 
         global og_callback
         og_callback = KDiffusionSampler.callback_state
@@ -73,7 +28,7 @@ class VectorscopeCC(scripts.Script):
             return _
 
         def choices_bool():
-            return ["True", "False"]
+            return ["False", "True"]
 
         def choices_method():
             return ["Disabled", "Straight", "Straight Abs.", "Cross", "Cross Abs.", "Ones", "N.Random", "U.Random", "Multi-Res", "Multi-Res Abs."]
@@ -107,6 +62,7 @@ class VectorscopeCC(scripts.Script):
         return scripts.AlwaysVisible
 
     def ui(self, is_img2img):
+
         with gr.Accordion(f"Vectorscope CC {VERSION}", open=False):
 
             with gr.Row():
@@ -124,6 +80,25 @@ class VectorscopeCC(scripts.Script):
                 g = gr.Slider(label="G", info='Magenta | Green',minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
                 b = gr.Slider(label="B", info='Yellow | Blue',minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
 
+            with gr.Accordion("Styles", open=False):
+                
+                with gr.Row():
+                    with gr.Column():
+                        style_choice = gr.Dropdown(label="Apply Style", choices=style_manager.list_style())
+                        style_name = gr.Textbox(label="Style Name")
+
+                        style_choice.input(fn=style_manager.get_style, inputs=style_choice, outputs=[latent, bri, con, sat, r, g, b])
+
+                    with gr.Column(variant="compact"):
+                        save_btn = gr.Button(value="Save Style")
+                        delete_btn = gr.Button(value="Delete Style")
+                        refresh_btn = gr.Button(value="Manual Refresh")
+
+                        save_btn.click(fn=lambda *args: gr.update(choices=style_manager.save_style(*args)), inputs=[style_name, latent, bri, con, sat, r, g, b], outputs=style_choice)
+                        delete_btn.click(fn=lambda name: gr.update(choices=style_manager.delete_style(name)), inputs=style_name, outputs=style_choice)
+                        refresh_btn.click(fn=lambda _: gr.update(choices=style_manager.list_style()), outputs=style_choice)
+
+
             with gr.Accordion("Advanced Settings", open=False):
                 doHR = gr.Checkbox(label="Process Hires. fix")
                 method = gr.Radio(["Straight", "Straight Abs.", "Cross", "Cross Abs.", "Ones", "N.Random", "U.Random", "Multi-Res", "Multi-Res Abs."], label="Noise Settings", value="Straight Abs.")
@@ -139,19 +114,19 @@ class VectorscopeCC(scripts.Script):
 
     def register_reset(self, reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method):
         for component in [enable, latent, doHR]:
-            reset_btn.click(fn=lambda x: gr.update(value=False), outputs=component)
+            reset_btn.click(fn=lambda _: gr.update(value=False), outputs=component)
         for component in [early, bri, r, g, b]:
-            reset_btn.click(fn=lambda x: gr.update(value=0.0), outputs=component)
+            reset_btn.click(fn=lambda _: gr.update(value=0.0), outputs=component)
         for component in [con, sat]:
-            reset_btn.click(fn=lambda x: gr.update(value=1.0), outputs=component)
+            reset_btn.click(fn=lambda _: gr.update(value=1.0), outputs=component)
 
-        reset_btn.click(fn=lambda x: gr.update(value='Straight Abs.'), outputs=method)
+        reset_btn.click(fn=lambda _: gr.update(value='Straight Abs.'), outputs=method)
 
     def register_random(self, random_btn, bri, con, sat, r, g, b):
         for component in [bri, r, g, b]:
-            random_btn.click(fn=lambda x: gr.update(value=round(random.uniform(-2.5, 2.5), 2)), outputs=component)
+            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(-2.5, 2.5), 2)), outputs=component)
         for component in [con, sat]:
-            random_btn.click(fn=lambda x: gr.update(value=round(random.uniform(0.5, 1.5), 2)), outputs=component)
+            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(0.5, 1.5), 2)), outputs=component)
 
     def parse_bool(self, string:str):
         if string.lower() == "true":
@@ -218,7 +193,7 @@ class VectorscopeCC(scripts.Script):
 
         stop = steps * (1.0 - early)
 
-        if not cc_seed == None:
+        if cc_seed is not None:
             random.seed(cc_seed)
 
             bri = round(random.uniform(-2.5, 2.5), 2)
@@ -292,7 +267,7 @@ class VectorscopeCC(scripts.Script):
                 target = gaussian_noise(d[mode])
 
             if 'Abs' in method:
-                target = torch.abs(target)
+                abs_cvt(target)
 
             batchSize = d[mode].size(0)
 

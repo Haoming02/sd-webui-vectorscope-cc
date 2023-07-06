@@ -53,6 +53,13 @@ refer to the parameters and sample images below and play around with the values.
 - **Reset:** Revert all settings to the default values
 - **Randomize:** Randomize `Brightness`, `Contrast`, `Saturation`, `R`, `G`, `B`
 
+#### Styles Preset
+- Use the `Dropdown` to select a Style to apply
+- To save a Style, enter a name in the `Textbox` then click **Save Style**
+- To delete a Style, enter the name in the `Textbox` then click **Delete Style**
+    - *Deleted Style is still in the `styles.json` in case you wish to retrieve it*
+- Click **Manual Refresh** to update the `Dropdown` the if you edited the `styles.json` directly
+
 #### Advanced Settings
 
 - **Process Hires. fix:** By default, this Extension only functions during the **txt2img** phase, so that **Hires. fix** may "fix" the artifacts introduced during **txt2img**. Enable this to process **Hires. fix** phase too.
@@ -128,6 +135,7 @@ refer to the parameters and sample images below and play around with the values.
 - [X] Add Support for **X/Y/Z Plot**
 - [X] Implement different Noise functions
 - [X] Add Randomize functions
+- [X] Styles Preset
 - [ ] Implement a better scaling algorithm
 - [ ] Fix the Brightness issues
 - [ ] Add Gradient feature
