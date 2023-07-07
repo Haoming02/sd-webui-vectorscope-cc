@@ -22,6 +22,8 @@ refer to the parameters and sample images below and play around with the values.
 - **Saturation:** Adjust the overall saturation of the image
 
 #### Color Channels
+- Now comes with a Color Wheel for visualization
+
 <table>
     <thead align="center">
         <tr>
@@ -53,7 +55,7 @@ refer to the parameters and sample images below and play around with the values.
 - **Reset:** Revert all settings to the default values
 - **Randomize:** Randomize `Brightness`, `Contrast`, `Saturation`, `R`, `G`, `B`
 
-#### Styles Preset
+#### Style Presets
 - Use the `Dropdown` to select a Style to apply
 - To save a Style, enter a name in the `Textbox` then click **Save Style**
 - To delete a Style, enter the name in the `Textbox` then click **Delete Style**
@@ -135,12 +137,12 @@ refer to the parameters and sample images below and play around with the values.
 - [X] Add Support for **X/Y/Z Plot**
 - [X] Implement different Noise functions
 - [X] Add Randomize functions
-- [X] Styles Preset
+- [X] Style Presets
 - [ ] Implement a better scaling algorithm
 - [ ] Fix the Brightness issues
 - [ ] Add Gradient feature
 - [ ] Append Parameters onto Metadata
-- [ ] Implement Color Picker / Color Wheel
+- [X] Implement ~~Color Picker~~ Color Wheel
 - [ ] Add Support for **Inpaint**
 
 <p align="center"><img src="samples/XYZ.jpg" width=768></p>

@@ -8,6 +8,10 @@ from scripts.cc_version import *
 from scripts.cc_noise import *
 from scripts.cc_style import StyleManager
 
+from scripts.cc_colorpicker import create_colorpicker
+from scripts.cc_colorpicker import horizontal_js
+from scripts.cc_colorpicker import vertical_js
+
 style_manager = StyleManager()
 
 class VectorscopeCC(scripts.Script):
@@ -76,9 +80,19 @@ class VectorscopeCC(scripts.Script):
                 sat = gr.Slider(label="Saturation", minimum=0.5, maximum=1.5, step=0.05, value=1.0)
 
             with gr.Row():
-                r = gr.Slider(label="R", info='Cyan | Red', minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
-                g = gr.Slider(label="G", info='Magenta | Green',minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
-                b = gr.Slider(label="B", info='Yellow | Blue',minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
+                with gr.Column():
+                    r = gr.Slider(label="R", info='Cyan | Red', minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
+                    g = gr.Slider(label="G", info='Magenta | Green',minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
+                    b = gr.Slider(label="B", info='Yellow | Blue',minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
+                
+                create_colorpicker(is_img2img)
+
+                r.input(None, inputs=[r, g, b], outputs=[], _js=horizontal_js(is_img2img))
+                r.input(None, inputs=[r, g, b], outputs=[], _js=vertical_js(is_img2img))
+                g.input(None, inputs=[r, g, b], outputs=[], _js=horizontal_js(is_img2img))
+                g.input(None, inputs=[r, g, b], outputs=[], _js=vertical_js(is_img2img))
+                b.input(None, inputs=[r, g, b], outputs=[], _js=horizontal_js(is_img2img))
+                b.input(None, inputs=[r, g, b], outputs=[], _js=vertical_js(is_img2img))
 
             with gr.Accordion("Styles", open=False):
                 
