@@ -30,8 +30,12 @@ class StyleManager():
 		return list(self.STYLE_SHEET['styles'].keys())
 
 	def get_style(self, style_name):
-		style = self.STYLE_SHEET['styles'][style_name]
-		return style['alt'], style['brightness'], style['contrast'], style['saturation'], style['rgb'][0], style['rgb'][1], style['rgb'][2]
+		try:
+			style = self.STYLE_SHEET['styles'][style_name]
+			return style['alt'], style['brightness'], style['contrast'], style['saturation'], style['rgb'][0], style['rgb'][1], style['rgb'][2]
+		except KeyError:
+			print(f'\n[Warning] No Style of Name "{style_name}" Found!\n')
+			return False, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0
 
 	def save_style(self, style_name, latent, bri, con, sat, r, g, b):
 		if style_name in self.STYLE_SHEET['styles'].keys():

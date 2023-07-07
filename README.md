@@ -56,11 +56,11 @@ refer to the parameters and sample images below and play around with the values.
 - **Randomize:** Randomize `Brightness`, `Contrast`, `Saturation`, `R`, `G`, `B`
 
 #### Style Presets
-- Use the `Dropdown` to select a Style to apply
+- Use the `Dropdown` to select a Style then click **Apply Style** to apply
 - To save a Style, enter a name in the `Textbox` then click **Save Style**
 - To delete a Style, enter the name in the `Textbox` then click **Delete Style**
     - *Deleted Style is still in the `styles.json` in case you wish to retrieve it*
-- Click **Manual Refresh** to update the `Dropdown` the if you edited the `styles.json` directly
+- Click **Refresh Style** to update the `Dropdown` the if you edited the `styles.json` directly
 
 #### Advanced Settings
 

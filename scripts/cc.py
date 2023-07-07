@@ -87,30 +87,29 @@ class VectorscopeCC(scripts.Script):
                 
                 create_colorpicker(is_img2img)
 
-                r.input(None, inputs=[r, g, b], outputs=[], _js=horizontal_js(is_img2img))
-                r.input(None, inputs=[r, g, b], outputs=[], _js=vertical_js(is_img2img))
-                g.input(None, inputs=[r, g, b], outputs=[], _js=horizontal_js(is_img2img))
-                g.input(None, inputs=[r, g, b], outputs=[], _js=vertical_js(is_img2img))
-                b.input(None, inputs=[r, g, b], outputs=[], _js=horizontal_js(is_img2img))
-                b.input(None, inputs=[r, g, b], outputs=[], _js=vertical_js(is_img2img))
+                for component in [r, g, b]:
+                    component.change(None, inputs=[r, g, b], outputs=[], _js=horizontal_js(is_img2img))
+                    component.change(None, inputs=[r, g, b], outputs=[], _js=vertical_js(is_img2img))
 
             with gr.Accordion("Styles", open=False):
                 
                 with gr.Row():
                     with gr.Column():
-                        style_choice = gr.Dropdown(label="Apply Style", choices=style_manager.list_style())
+                        style_choice = gr.Dropdown(label="Styles", choices=style_manager.list_style())
                         style_name = gr.Textbox(label="Style Name")
 
-                        style_choice.input(fn=style_manager.get_style, inputs=style_choice, outputs=[latent, bri, con, sat, r, g, b])
+                    with gr.Column():
+                        with gr.Row(variant="compact"):
+                            apply_btn = gr.Button(value="Apply Style")
+                            refresh_btn = gr.Button(value="Refresh Style")
+                        with gr.Row(variant="compact"):
+                            save_btn = gr.Button(value="Save Style")
+                            delete_btn = gr.Button(value="Delete Style")
 
-                    with gr.Column(variant="compact"):
-                        save_btn = gr.Button(value="Save Style")
-                        delete_btn = gr.Button(value="Delete Style")
-                        refresh_btn = gr.Button(value="Manual Refresh")
-
-                        save_btn.click(fn=lambda *args: gr.update(choices=style_manager.save_style(*args)), inputs=[style_name, latent, bri, con, sat, r, g, b], outputs=style_choice)
-                        delete_btn.click(fn=lambda name: gr.update(choices=style_manager.delete_style(name)), inputs=style_name, outputs=style_choice)
-                        refresh_btn.click(fn=lambda _: gr.update(choices=style_manager.list_style()), outputs=style_choice)
+                    apply_btn.click(fn=style_manager.get_style, inputs=style_choice, outputs=[latent, bri, con, sat, r, g, b])
+                    save_btn.click(fn=lambda *args: gr.update(choices=style_manager.save_style(*args)), inputs=[style_name, latent, bri, con, sat, r, g, b], outputs=style_choice)
+                    delete_btn.click(fn=lambda name: gr.update(choices=style_manager.delete_style(name)), inputs=style_name, outputs=style_choice)
+                    refresh_btn.click(fn=lambda _: gr.update(choices=style_manager.list_style()), outputs=style_choice)
 
 
             with gr.Accordion("Advanced Settings", open=False):
