@@ -4,23 +4,24 @@ from modules import shared
 import gradio as gr
 import random
 
-from scripts.cc_version import *
 from scripts.cc_noise import *
-from scripts.cc_style import StyleManager
+
+from scripts.cc_version import VERSION
+from scripts.cc_version import clean_outdated
 
 from scripts.cc_colorpicker import create_colorpicker
 from scripts.cc_colorpicker import horizontal_js
 from scripts.cc_colorpicker import vertical_js
 
+from scripts.cc_style import StyleManager
 style_manager = StyleManager()
+style_manager.load_styles()
+
+og_callback = KDiffusionSampler.callback_state
 
 class VectorscopeCC(scripts.Script):
     def __init__(self):
         clean_outdated('cc.py')
-        style_manager.load_styles()
-
-        global og_callback
-        og_callback = KDiffusionSampler.callback_state
 
         self.xyzCache = {}
         self.xyz_support()
@@ -228,6 +229,10 @@ class VectorscopeCC(scripts.Script):
         if stop < 1:
             return p
 
+        if shared.opts.cc_metadata and shared.opts.cc_metadata is True:
+            cc_params = f'Alt: {latent}, Skip: {early}, Brightness: {bri}, Contrast: {con}, Saturation: {sat}, RGB: ({r}, {g}, {b}), Noise: {method}, Proc. Hr.F: {doHR}'
+            p.extra_generation_params.update({f'Vec. CC [{VERSION}]': cc_params})
+
         bri /= steps
         con = pow(con, 1.0 / steps) - 1
         sat = pow(sat, 1.0 / steps)
@@ -280,7 +285,7 @@ class VectorscopeCC(scripts.Script):
                 target = gaussian_noise(d[mode])
 
             if 'Abs' in method:
-                target = abs_cvt(target)
+                target = to_abs(target)
 
             batchSize = d[mode].size(0)
 

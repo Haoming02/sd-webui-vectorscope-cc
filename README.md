@@ -141,7 +141,8 @@ refer to the parameters and sample images below and play around with the values.
 - [ ] Implement a better scaling algorithm
 - [ ] Fix the Brightness issues
 - [ ] Add Gradient feature
-- [ ] Append Parameters onto Metadata
+- [X] Append Parameters onto Metadata
+  - You can enable this in the **Infotext** section of the **Settings** tab
 - [X] Implement ~~Color Picker~~ Color Wheel
 - [ ] Add Support for **Inpaint**
 
@@ -198,4 +199,5 @@ Those who are experienced in Color Correction should be rather familiar with thi
 
 <p align="center"><img src="samples/Vectorscope.png" width=256></p>
 
-<sup>~~Yes. I'm aware that it's just how digital colors work in general.~~</sup>
+<sup>~~Yes. I'm aware that it's just how digital colors work in general.~~<br>
+~~We've come full **circle** *(\*ba dum tss)* now that a Color Wheel is actually added.~~</sup>

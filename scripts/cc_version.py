@@ -1,7 +1,7 @@
 import modules.scripts as scripts
 import json
 
-VERSION = 'v1.3.3'
+VERSION = 'v1.3.4'
 
 def clean_outdated(EXT_NAME:str):
     with open(scripts.basedir() + '/' + 'ui-config.json', 'r') as json_file:

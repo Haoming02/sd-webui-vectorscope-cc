@@ -1,8 +1,11 @@
 from modules import devices
 import torch
 
-def abs_cvt(latent):
+def to_abs(latent):
     return torch.abs(latent)
+
+def zeros(latent):
+    return torch.zeros_like(latent)
 
 def ones(latent):
     return torch.ones_like(latent)
@@ -18,7 +21,7 @@ def multires_noise(latent, use_zero:bool, iterations=8, discount=0.4):
     Reference: https://wandb.ai/johnowhitaker/multires_noise/reports/Multi-Resolution-Noise-for-Diffusion-Model-Training--VmlldzozNjYyOTU2
     Credit: Kohya_SS
     """
-    noise = torch.zeros_like(latent) if use_zero else ones(latent)
+    noise = zeros(latent) if use_zero else ones(latent)
 
     batchSize = noise.size(0)
     height = noise.size(2)
