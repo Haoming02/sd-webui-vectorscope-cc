@@ -61,7 +61,7 @@ class VectorscopeCC(scripts.Script):
         xyz_grid.axis_options.extend(extra_axis_options)
 
     def title(self):
-        return "Vectorscope Color Correction"
+        return "Vectorscope CC"
 
     def show(self, is_img2img):
         return scripts.AlwaysVisible

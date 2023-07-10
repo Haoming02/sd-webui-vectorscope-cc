@@ -1,0 +1,29 @@
+{
+	"prompt": "(masterpiece, best quality), 1girl, solo",
+	"negative_prompt": "(low quality, worst quality:1.2), EasyNegative, EasyNegativeV2",
+	"seed": -1,
+	"sampler_name": "Euler a",
+	"sampler_index": "euler",
+	"batch_size": 1,
+	"steps": 24,
+	"cfg_scale": 8.5,
+	"width": 512,
+	"height": 512,
+	"alwayson_scripts": {
+		"Vectorscope CC": {
+			"args": [
+				true,
+				true,
+				-2.5,
+				1.25,
+				1.25,
+				0.0,
+				0.0,
+				0.0,
+				0.0,
+				false,
+				"Straight Abs."
+			]
+		}
+	}
+}

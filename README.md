@@ -1,7 +1,7 @@
 ﻿# SD Webui Vectorscope CC
 This is an Extension for the [Automatic1111 Webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui), which performs *a kind of* **Offset Noise**[*](#offset-noise-tldr) natively. 
 
-> *This Extension is the result of my numerous trial and error[\*](#what-is-under-the-hood)*
+> [Sample Images](#sample-images)
 
 ## How to Use
 After installing this Extension, you will see a new section in both **txt2img** and **img2img** tabs, 
@@ -145,6 +145,7 @@ refer to the parameters and sample images below and play around with the values.
   - You can enable this in the **Infotext** section of the **Settings** tab
 - [X] Implement ~~Color Picker~~ Color Wheel
 - [ ] Add Support for **Inpaint**
+- [X] Add API Docs
 
 <p align="center"><img src="samples/XYZ.jpg" width=768></p>
 <p align="center"><code>X/Y/Z Plot Support</code></p>
@@ -152,6 +153,12 @@ refer to the parameters and sample images below and play around with the values.
 <p align="center"><img src="samples/Random.jpg" width=768></p>
 <p align="center">For <b>Randomize</b> in <code>X/Y/Z Plot</code>, the value is used as the random seed<br>
 You can refer to the console to see the randomized values</p>
+
+## API
+You can use this Extension via [API](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API) by adding an entry in the `alwayson_scripts` of your payload. An [example](api_example.json) is provided.
+The `args` are the sent in the following order:
+
+> `[Enable, Alt, Brightness, Contrast, Saturation, R, G, B, Skip, Process Hires. Fix, Noise Settings]`
 
 ## Known Issues
 - Does not work with `DDIM` sampler

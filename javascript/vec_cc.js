@@ -6,13 +6,14 @@ onUiLoaded(async () => {
 
         const container = document.getElementById('cc-colorwheel-' + mode)
         container.style.height = '200px'
+        container.style.width = 'auto'
 
         container.querySelector('.float').remove()
         container.querySelector('.download').remove()
 
         const wheel = container.getElementsByTagName('img')[0]
-        wheel.style.width = '100%'
         wheel.style.height = '100%'
+        wheel.style.width = 'auto'
         wheel.style.margin = 'auto'
 
         const temp = document.getElementById('cc-temp-' + mode)
