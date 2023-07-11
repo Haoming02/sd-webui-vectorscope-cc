@@ -1,3 +1,6 @@
+### v1.4.0 - 2023 Jul.11
+- Implement **Scaling** algorithm
+
 ### v1.3.5 - 2023 Jul.11
 - Implement **Color Picker**
 

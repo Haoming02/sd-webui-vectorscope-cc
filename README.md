@@ -92,6 +92,30 @@ refer to the parameters and sample images below and play around with the values.
 <p align="center"><img src="samples/Bright.jpg" width=768></p>
 <p align="center"><img src="samples/Dark.jpg" width=768></p>
 
+##### Scaling Settings
+Previously, this Extension offsets the noise by the same amount each step. 
+But due to the denoising process , this may produce undesired outcomes such as blurriness at high **Brightness** or noises at low **Brightness**.
+Thus, I added a scaling option to modify the offset amount.
+
+> Essentially, the "magnitude" of the default Tensor gets smaller every step, so offsetting by the same amount will have stronger effects at later steps. This is reversed on the `Alt.` Tensor however.
+
+- **Flat:** Default behavior. Same amount each step.
+- **Cos:** Cosine scaling. *(High -> Low)*
+- **Sin:** Sine scaling. *(Low -> High)*
+- **1 - Cos:** *(Low -> High)*
+- **1 - Sin:** *(High -> Low)*
+
+> In my experience, **1 - Cos** works the best for `Alt.` Tensor and **1 - Sin** works the best for default Tensor
+
+<p align="center">
+<code>Alt. Disabled</code><br>
+<img src="samples/Scaling.jpg" width=768>
+<code>Alt. Enabled</code><br>
+<img src="samples/Scaling_alt.jpg" width=768>
+</p>
+
+<p align="center"><i>Notice the blurriness and the noises on <code>Flat</code> scaling</i></p>
+
 ## Sample Images
 - **Checkpoint:** [UHD-23](https://civitai.com/models/22371/uhd-23)
 - **Pos. Prompt:** `(masterpiece, best quality), 1girl, solo, night, street, city, neon_lights`
@@ -139,8 +163,8 @@ refer to the parameters and sample images below and play around with the values.
 - [X] Implement different Noise functions
 - [X] Add Randomize functions
 - [X] Style Presets
-- [ ] Implement a better scaling algorithm
-- [ ] Fix the Brightness issues
+- [X] Implement a better scaling algorithm
+- [X] Fix the **Brightness** issues ~~kinda~~
 - [ ] Add Gradient feature
 - [X] Append Parameters onto Metadata
   - You can enable this in the **Infotext** section of the **Settings** tab
@@ -156,17 +180,16 @@ refer to the parameters and sample images below and play around with the values.
 You can refer to the console to see the randomized values</p>
 
 ## API
-You can use this Extension via [API](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API) by adding an entry in the `alwayson_scripts` of your payload. An [example](api_example.json) is provided.
+You can use this Extension via [API](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API) by adding an entry in the `alwayson_scripts` of your payload. 
+An [example](api_example.json) is provided.
 The `args` are the sent in the following order:
 
-> `[Enable, Alt, Brightness, Contrast, Saturation, R, G, B, Skip, Process Hires. Fix, Noise Settings]`
+- **[Enable, Alt, Brightness, Contrast, Saturation, R, G, B, Skip, Process Hires. Fix, Noise Settings, Scaling Settings]**
+> `bool`, `bool`, `float`, `float`, `float`, `float`, `float`, `float`, `float`, `bool`, `str`, `str`
 
 ## Known Issues
-- Does not work with `DDIM` sampler
+- Does not work with `DDIM`, `UniPC` samplers
 - Has little effect when used with certain **LoRA**s
-- Too high **Brightness** causes the image to be blurry; Too low **Brightness** causes the image to be noisy
-  - Using `Multi-Res` seems to fix the blurry issue *(but not the noise issue)*
-- Low `steps` *(`< 10`)* may cause the effects to be stronger due to poor scaling algorithm
 
 <hr>
 

@@ -6,6 +6,10 @@ import random
 
 from scripts.cc_noise import *
 
+from scripts.cc_xyz import xyz_support
+            
+from scripts.cc_scaling import apply_scaling
+
 from scripts.cc_version import VERSION
 from scripts.cc_version import clean_outdated
 
@@ -24,41 +28,7 @@ class VectorscopeCC(scripts.Script):
         clean_outdated('cc.py')
 
         self.xyzCache = {}
-        self.xyz_support()
-
-    def xyz_support(self):
-        def apply_field(field):
-            def _(p, x, xs):
-                self.xyzCache.update({field : x})
-            return _
-
-        def choices_bool():
-            return ["False", "True"]
-
-        def choices_method():
-            return ["Disabled", "Straight", "Straight Abs.", "Cross", "Cross Abs.", "Ones", "N.Random", "U.Random", "Multi-Res", "Multi-Res Abs."]
-
-        for data in scripts.scripts_data:
-            if data.script_class.__module__ == 'xyz_grid.py' and hasattr(data, "module"):
-                xyz_grid = data.module
-                break
-
-        extra_axis_options = [
-            xyz_grid.AxisOption("[Vec.CC] Enable", str, apply_field("Enable"), choices=choices_bool),
-            xyz_grid.AxisOption("[Vec.CC] Alt.", str, apply_field("Alt"), choices=choices_bool),
-            xyz_grid.AxisOption("[Vec.CC] Skip", float, apply_field("Skip")),
-            xyz_grid.AxisOption("[Vec.CC] Brightness", float, apply_field("Brightness")),
-            xyz_grid.AxisOption("[Vec.CC] Contrast", float, apply_field("Contrast")),
-            xyz_grid.AxisOption("[Vec.CC] Saturation", float, apply_field("Saturation")),
-            xyz_grid.AxisOption("[Vec.CC] R", float, apply_field("R")),
-            xyz_grid.AxisOption("[Vec.CC] G", float, apply_field("G")),
-            xyz_grid.AxisOption("[Vec.CC] B", float, apply_field("B")),
-            xyz_grid.AxisOption("[Adv.CC] Proc. H.Fix", str, apply_field("DoHR"), choices=choices_bool),
-            xyz_grid.AxisOption("[Adv.CC] Method", str, apply_field("Method"), choices=choices_method),
-            xyz_grid.AxisOption("[Adv.CC] Randomize", int, apply_field("Random"))
-        ]
-
-        xyz_grid.axis_options.extend(extra_axis_options)
+        xyz_support(self.xyzCache)
 
     def title(self):
         return "Vectorscope CC"
@@ -76,15 +46,15 @@ class VectorscopeCC(scripts.Script):
                 early = gr.Slider(label="Skip", minimum=0.0, maximum=1.0, step=0.1, value=0.0)
 
             with gr.Row():
-                bri = gr.Slider(label="Brightness", minimum=-5.0, maximum=5.0, step=0.1, value=0.0)
-                con = gr.Slider(label="Contrast", minimum=0.5, maximum=1.5, step=0.05, value=1.0)
-                sat = gr.Slider(label="Saturation", minimum=0.5, maximum=1.5, step=0.05, value=1.0)
+                bri = gr.Slider(label="Brightness", minimum=-6.0, maximum=6.0, step=0.1, value=0.0)
+                con = gr.Slider(label="Contrast", minimum=0.25, maximum=1.75, step=0.05, value=1.0)
+                sat = gr.Slider(label="Saturation", minimum=0.25, maximum=1.75, step=0.05, value=1.0)
 
             with gr.Row():
                 with gr.Column():
-                    r = gr.Slider(label="R", info='Cyan | Red', minimum=-2.5, maximum=2.5, step=0.05, value=0.0, elem_id='cc-r-' + ('img' if is_img2img else 'txt'))
-                    g = gr.Slider(label="G", info='Magenta | Green',minimum=-2.5, maximum=2.5, step=0.05, value=0.0, elem_id='cc-g-' + ('img' if is_img2img else 'txt'))
-                    b = gr.Slider(label="B", info='Yellow | Blue',minimum=-2.5, maximum=2.5, step=0.05, value=0.0, elem_id='cc-b-' + ('img' if is_img2img else 'txt'))
+                    r = gr.Slider(label="R", info='Cyan | Red', minimum=-3.0, maximum=3.0, step=0.05, value=0.0, elem_id='cc-r-' + ('img' if is_img2img else 'txt'))
+                    g = gr.Slider(label="G", info='Magenta | Green',minimum=-3.0, maximum=3.0, step=0.05, value=0.0, elem_id='cc-g-' + ('img' if is_img2img else 'txt'))
+                    b = gr.Slider(label="B", info='Yellow | Blue',minimum=-3.0, maximum=3.0, step=0.05, value=0.0, elem_id='cc-b-' + ('img' if is_img2img else 'txt'))
 
                 create_colorpicker(is_img2img)
 
@@ -116,17 +86,18 @@ class VectorscopeCC(scripts.Script):
             with gr.Accordion("Advanced Settings", open=False):
                 doHR = gr.Checkbox(label="Process Hires. fix")
                 method = gr.Radio(["Straight", "Straight Abs.", "Cross", "Cross Abs.", "Ones", "N.Random", "U.Random", "Multi-Res", "Multi-Res Abs."], label="Noise Settings", value="Straight Abs.")
+                scaling = gr.Radio(["Flat", "Cos", "Sin", "1 - Cos", "1 - Sin"], label="Scaling Settings", value="Flat")
 
             with gr.Row():
                 reset_btn = gr.Button(value="Reset")
-                self.register_reset(reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method)
+                self.register_reset(reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method, scaling)
 
                 random_btn = gr.Button(value="Randomize")
                 self.register_random(random_btn, bri, con, sat, r, g, b)
 
-        return [enable, latent, bri, con, sat, early, r, g, b, doHR, method]
+        return [enable, latent, bri, con, sat, early, r, g, b, doHR, method, scaling]
 
-    def register_reset(self, reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method):
+    def register_reset(self, reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method, scaling):
         for component in [enable, latent, doHR]:
             reset_btn.click(fn=lambda _: gr.update(value=False), outputs=component)
         for component in [early, bri, r, g, b]:
@@ -135,12 +106,13 @@ class VectorscopeCC(scripts.Script):
             reset_btn.click(fn=lambda _: gr.update(value=1.0), outputs=component)
 
         reset_btn.click(fn=lambda _: gr.update(value='Straight Abs.'), outputs=method)
+        reset_btn.click(fn=lambda _: gr.update(value='Flat'), outputs=scaling)
 
     def register_random(self, random_btn, bri, con, sat, r, g, b):
         for component in [bri, r, g, b]:
-            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(-2.5, 2.5), 2)), outputs=component)
+            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(-3.0, 3.0), 2)), outputs=component)
         for component in [con, sat]:
-            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(0.5, 1.5), 2)), outputs=component)
+            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(0.25, 1.75), 2)), outputs=component)
 
     def parse_bool(self, string:str):
         if string.lower() == "true":
@@ -150,7 +122,7 @@ class VectorscopeCC(scripts.Script):
 
         raise ValueError(f"Invalid Value: {string}")
 
-    def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, early:float, r:float, g:float, b:float, doHR:bool, method:str):
+    def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, early:float, r:float, g:float, b:float, doHR:bool, method:str, scaling:str):
         if 'Enable' in self.xyzCache.keys():
             enable = self.parse_bool(self.xyzCache['Enable'])
 
@@ -192,6 +164,8 @@ class VectorscopeCC(scripts.Script):
                     doHR = self.parse_bool(v)
                 case 'Method':
                     method = v
+                case 'Scaling':
+                    scaling = v
                 case 'Random':
                     cc_seed = v
 
@@ -210,13 +184,13 @@ class VectorscopeCC(scripts.Script):
         if cc_seed is not None:
             random.seed(cc_seed)
 
-            bri = round(random.uniform(-2.5, 2.5), 2)
-            r = round(random.uniform(-2.5, 2.5), 2)
-            g = round(random.uniform(-2.5, 2.5), 2)
-            b = round(random.uniform(-2.5, 2.5), 2)
+            bri = round(random.uniform(-3.0, 3.0), 2)
+            r = round(random.uniform(-3.0, 3.0), 2)
+            g = round(random.uniform(-3.0, 3.0), 2)
+            b = round(random.uniform(-3.0, 3.0), 2)
 
-            con = round(random.uniform(0.5, 1.5), 2)
-            sat = round(random.uniform(0.5, 1.5), 2)
+            con = round(random.uniform(0.25, 1.75), 2)
+            sat = round(random.uniform(0.25, 1.75), 2)
 
             print(f'-> Seed: {cc_seed}')
             print(f'Brightness:\t{bri}')
@@ -230,11 +204,11 @@ class VectorscopeCC(scripts.Script):
             return p
 
         if shared.opts.cc_metadata and shared.opts.cc_metadata is True:
-            cc_params = f'Alt: {latent}, Skip: {early}, Brightness: {bri}, Contrast: {con}, Saturation: {sat}, RGB: ({r}, {g}, {b}), Noise: {method}, Proc. Hr.F: {doHR}'
+            cc_params = f'Alt: {latent}, Skip: {early}, Brightness: {bri}, Contrast: {con}, Saturation: {sat}, RGB: ({r}, {g}, {b}), Noise: {method}, Proc. Hr.F: {doHR}, Scaling: {scaling}'
             p.extra_generation_params.update({f'Vec. CC [{VERSION}]': cc_params})
 
         bri /= steps
-        con = pow(con, 1.0 / steps) - 1
+        con = pow(con, 1.0 / steps)
         sat = pow(sat, 1.0 / steps)
         r /= steps
         g /= steps
@@ -289,22 +263,24 @@ class VectorscopeCC(scripts.Script):
 
             batchSize = d[mode].size(0)
 
+            mods = apply_scaling(scaling, d["i"], steps, bri, con, sat, r, g, b)
+
             for i in range(batchSize):
                 BRIGHTNESS = [source[i, 0], target[i, 0]]
                 R = [source[i, 2], target[i, 2]]
                 G = [source[i, 1], target[i, 1]]
                 B = [source[i, 3], target[i, 3]]
 
-                BRIGHTNESS[0] += BRIGHTNESS[1] * bri
-                BRIGHTNESS[0] += BRIGHTNESS[1] * con
+                BRIGHTNESS[0] += BRIGHTNESS[1] * mods[0]
+                BRIGHTNESS[0] *= mods[1]
 
-                R[0] -= R[1] * r
-                G[0] += G[1] * g
-                B[0] -= B[1] * b
+                R[0] -= R[1] * mods[3]
+                G[0] += G[1] * mods[4]
+                B[0] -= B[1] * mods[5]
 
-                R[0] *= sat
-                G[0] *= sat
-                B[0] *= sat
+                R[0] *= mods[2]
+                G[0] *= mods[2]
+                B[0] *= mods[2]
 
             return og_callback(self, d)
 
