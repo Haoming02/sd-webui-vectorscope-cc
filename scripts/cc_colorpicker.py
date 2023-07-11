@@ -1,7 +1,7 @@
 import modules.scripts as scripts
 import gradio as gr
 
-WHEEL = scripts.basedir() + '/samples/Vectorscope.png'
+WHEEL = scripts.basedir() + '/scripts/Vectorscope.png'
 DOT = scripts.basedir() + '/scripts/dot.png'
 
 def create_colorpicker(is_img):

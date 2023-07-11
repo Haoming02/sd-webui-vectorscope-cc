@@ -181,7 +181,7 @@ You can refer to the console to see the randomized values</p>
 
 ## API
 You can use this Extension via [API](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API) by adding an entry in the `alwayson_scripts` of your payload. 
-An [example](api_example.json) is provided.
+An [example](samples/api_example.json) is provided.
 The `args` are the sent in the following order:
 
 - **[Enable, Alt, Brightness, Contrast, Saturation, R, G, B, Skip, Process Hires. Fix, Noise Settings, Scaling Settings]**
@@ -228,7 +228,7 @@ hence why you can control the brightness as well as the colors.
 The Extension is named this way because the color interactions remind me of the `Vectorscope` found in **Premiere Pro**'s **Lumetri Color**.
 Those who are experienced in Color Correction should be rather familiar with this Extension.
 
-<p align="center"><img src="samples/Vectorscope.png" width=256></p>
+<p align="center"><img src="scripts/Vectorscope.png" width=256></p>
 
 <sup>~~Yes. I'm aware that it's just how digital colors work in general.~~<br>
 ~~We've come full **circle** *(\*ba dum tss)* now that a Color Wheel is actually added.~~</sup>
