@@ -82,10 +82,10 @@ class VectorscopeCC(scripts.Script):
 
             with gr.Row():
                 with gr.Column():
-                    r = gr.Slider(label="R", info='Cyan | Red', minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
-                    g = gr.Slider(label="G", info='Magenta | Green',minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
-                    b = gr.Slider(label="B", info='Yellow | Blue',minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
-                
+                    r = gr.Slider(label="R", info='Cyan | Red', minimum=-2.5, maximum=2.5, step=0.05, value=0.0, elem_id='cc-r-' + ('img' if is_img2img else 'txt'))
+                    g = gr.Slider(label="G", info='Magenta | Green',minimum=-2.5, maximum=2.5, step=0.05, value=0.0, elem_id='cc-g-' + ('img' if is_img2img else 'txt'))
+                    b = gr.Slider(label="B", info='Yellow | Blue',minimum=-2.5, maximum=2.5, step=0.05, value=0.0, elem_id='cc-b-' + ('img' if is_img2img else 'txt'))
+
                 create_colorpicker(is_img2img)
 
                 for component in [r, g, b]:
@@ -93,7 +93,7 @@ class VectorscopeCC(scripts.Script):
                     component.change(None, inputs=[r, g, b], outputs=[], _js=vertical_js(is_img2img))
 
             with gr.Accordion("Styles", open=False):
-                
+
                 with gr.Row():
                     with gr.Column():
                         style_choice = gr.Dropdown(label="Styles", choices=style_manager.list_style())
@@ -147,7 +147,7 @@ class VectorscopeCC(scripts.Script):
             return True
         if string.lower() == "false":
             return False
-        
+
         raise ValueError(f"Invalid Value: {string}")
 
     def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, early:float, r:float, g:float, b:float, doHR:bool, method:str):
@@ -272,7 +272,7 @@ class VectorscopeCC(scripts.Script):
             # "Straight", "Straight Abs.", "Cross", "Cross Abs.", "Ones", "N.Random", "U.Random", "Multi-Res", "Multi-Res Abs."
             if 'Straight' in method:
                 target = d[mode]
-            elif 'Cross' in method: 
+            elif 'Cross' in method:
                 cross = 'x' if mode == 'denoised' else 'denoised'
                 target = d[cross]
             elif 'Multi-Res' in method:

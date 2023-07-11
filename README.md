@@ -22,7 +22,8 @@ refer to the parameters and sample images below and play around with the values.
 - **Saturation:** Adjust the overall saturation of the image
 
 #### Color Channels
-- Now comes with a Color Wheel for visualization
+- Comes with a Color Wheel for visualization
+- You can also click on the Color Wheel to select a color directly
 
 <table>
     <thead align="center">
@@ -143,7 +144,7 @@ refer to the parameters and sample images below and play around with the values.
 - [ ] Add Gradient feature
 - [X] Append Parameters onto Metadata
   - You can enable this in the **Infotext** section of the **Settings** tab
-- [X] Implement ~~Color Picker~~ Color Wheel
+- [X] Implement **Color Wheel** & **Color Picker**
 - [ ] Add Support for **Inpaint**
 - [X] Add API Docs
 

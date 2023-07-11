@@ -2,10 +2,20 @@
     position: absolute;
     width: 24px;
     height: 24px;
+    pointer-events: none;
 }
 
 #cc-dot-img {
     position: absolute;
     width: 24px;
     height: 24px;
+    pointer-events: none;
+}
+
+#cc-img-txt {
+    cursor: pointer;
+}
+
+#cc-img-img {
+    cursor: pointer;
 }

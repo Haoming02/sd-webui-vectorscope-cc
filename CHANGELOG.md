@@ -1,3 +1,6 @@
+### v1.3.5 - 2023 Jul.11
+- Implement **Color Picker**
+
 ### v1.3.4 - 2023 Jul.08
 - Implement **Metadata**
 

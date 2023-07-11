@@ -1,3 +1,54 @@
+function registerPicker(wheel, sliders) {
+    wheel.onclick = function (e) {
+        const rect = e.target.getBoundingClientRect();
+        var x = ((e.clientX - rect.left) - 100.0) / 25;
+        var y = ((e.clientY - rect.top) - 100.0) / 25;
+
+        // console.log('(' + x + ', ' + y + ')')
+
+        const zeta = Math.atan(y / x)
+        var degree = 0
+
+        if (x >= 0) {
+            if (y >= 0)
+                degree = zeta * 180 / Math.PI
+            else
+                degree = 360 + zeta * 180 / Math.PI
+        }
+        else if (x < 0) {
+            degree = 180 + zeta * 180 / Math.PI
+        }
+
+        // -0.5r - 0.5g + b = x
+        // -0.866r + 0.866g = y
+        // 240r + 120g = z * rgb
+
+        // g = (1 / 0.866)y + r
+        // -0.5r - 0.5((1 / 0.866)y + r) + b = x
+        // b = x + 0.5r + 0.5((1 / 0.866)y + r)
+
+        // 240r + 120(1 / 0.866)y + r = z * r((1 / 0.866)y + r)(x + 0.5r + 0.5((1 / 0.866)y + r))
+
+        var r = -(0.00077 * (433 * x * degree + 750 * y * degree) / degree)
+        var g = y / 0.866 + r
+        var b = x + 0.5 * r + 0.5 * g
+
+        const mag = Math.sqrt(r * r + g * g + b * b)
+        const len = Math.abs(r) + Math.abs(g) + Math.abs(b)
+
+        r = r / mag * len
+        g = g / mag * len
+        b = b / mag * len
+
+        sliders[0].value = r.toFixed(2)
+        updateInput(sliders[0])
+        sliders[1].value = g.toFixed(2)
+        updateInput(sliders[1])
+        sliders[2].value = b.toFixed(2)
+        updateInput(sliders[2])
+    }
+}
+
 onUiLoaded(async () => {
 
     const Modes = ['txt', 'img']
@@ -15,6 +66,17 @@ onUiLoaded(async () => {
         wheel.style.height = '100%'
         wheel.style.width = 'auto'
         wheel.style.margin = 'auto'
+        wheel.id = 'cc-img-' + mode
+
+        wheel.ondragstart = () => { return false; }
+
+        sliders = [
+            document.getElementById('cc-r-' + mode).querySelector('input'),
+            document.getElementById('cc-g-' + mode).querySelector('input'),
+            document.getElementById('cc-b-' + mode).querySelector('input')
+        ]
+
+        registerPicker(wheel, sliders)
 
         const temp = document.getElementById('cc-temp-' + mode)
 
