@@ -13,6 +13,7 @@ refer to the parameters and sample images below and play around with the values.
 - **Enable:** Turn on & off this Extension
 - **Alt:** Modify an alternative Tensor instead, causing the effects to be significantly stronger
 - **Skip:** Skip the last percentage of steps and only process the first few steps
+  - *Not as useful now that you can tune the [Scaling Settings](#scaling-settings)*
 
 <p align="center"><img src="samples/Skip.jpg" width=512></p>
 <p align="center">When <code>Alt.</code> is enabled, the image can get distorted at high value<br>Increase <code>Skip</code> to still achieve a stronger effect but without distortion</p>
@@ -53,7 +54,7 @@ refer to the parameters and sample images below and play around with the values.
 </table>
 
 #### Buttons
-- **Reset:** Revert all settings to the default values
+- **Reset:** Reset all settings to the default values
 - **Randomize:** Randomize `Brightness`, `Contrast`, `Saturation`, `R`, `G`, `B`
 
 #### Style Presets
@@ -61,7 +62,7 @@ refer to the parameters and sample images below and play around with the values.
 - To save a Style, enter a name in the `Textbox` then click **Save Style**
 - To delete a Style, enter the name in the `Textbox` then click **Delete Style**
     - *Deleted Style is still in the `styles.json` in case you wish to retrieve it*
-- Click **Refresh Style** to update the `Dropdown` the if you edited the `styles.json` directly
+- Click **Refresh Style** to update the `Dropdown` if you edited the `styles.json` directly
 
 #### Advanced Settings
 
@@ -105,11 +106,14 @@ Thus, I added a scaling option to modify the offset amount.
 - **1 - Cos:** *(Low -> High)*
 - **1 - Sin:** *(High -> Low)*
 
-> In my experience, **1 - Cos** works the best for `Alt.` Tensor and **1 - Sin** works the best for default Tensor
+> In my experience, **`1 - Sin`** works better for the **default** Tensor while **`1 - Cos`** works better for the **Alt.** Tensor
 
 <p align="center">
 <code>Alt. Disabled</code><br>
 <img src="samples/Scaling.jpg" width=768>
+</p>
+
+<p align="center">
 <code>Alt. Enabled</code><br>
 <img src="samples/Scaling_alt.jpg" width=768>
 </p>
@@ -160,17 +164,16 @@ Thus, I added a scaling option to modify the offset amount.
 ## Roadmap
 - [X] Extension Released
 - [X] Add Support for **X/Y/Z Plot**
-- [X] Implement different Noise functions
-- [X] Add Randomize functions
-- [X] Style Presets
-- [X] Implement a better scaling algorithm
-- [X] Fix the **Brightness** issues ~~kinda~~
-- [ ] Add Gradient feature
+- [X] Implement different **Noise** functions
+- [X] Add **Randomize** functions
 - [X] Append Parameters onto Metadata
   - You can enable this in the **Infotext** section of the **Settings** tab
+- [X] **Style** Presets
 - [X] Implement **Color Wheel** & **Color Picker**
-- [ ] Add Support for **Inpaint**
+- [X] Implement better scaling algorithms
+  - [X] Fix the **Brightness** issues *~~kinda~~*
 - [X] Add API Docs
+- [ ] Add Gradient features
 
 <p align="center"><img src="samples/XYZ.jpg" width=768></p>
 <p align="center"><code>X/Y/Z Plot Support</code></p>

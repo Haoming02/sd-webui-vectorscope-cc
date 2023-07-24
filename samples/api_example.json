@@ -1,6 +1,6 @@
 {
-	"prompt": "(masterpiece, best quality), 1girl, solo",
-	"negative_prompt": "(low quality, worst quality:1.2), EasyNegative, EasyNegativeV2",
+	"prompt": "(masterpiece, best quality), 1girl, solo, night",
+	"negative_prompt": "(low quality, worst quality:1.2)",
 	"seed": -1,
 	"sampler_name": "Euler a",
 	"sampler_index": "euler",
