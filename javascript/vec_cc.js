@@ -60,7 +60,10 @@ onUiLoaded(async () => {
         container.style.width = 'auto'
 
         container.querySelector('.float').remove()
-        container.querySelector('.download').remove()
+        container.querySelector('.download')?.remove()
+        for (const downloadButton of container.querySelectorAll('[download]')) {
+            downloadButton.parentElement.remove()
+        }
 
         const wheel = container.getElementsByTagName('img')[0]
         wheel.style.height = '100%'
