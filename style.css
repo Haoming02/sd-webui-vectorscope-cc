@@ -19,3 +19,19 @@
 #cc-img-img {
     cursor: pointer;
 }
+
+#vec-cc-txt button {
+    border-radius: 0.5em;
+}
+
+#vec-cc-txt label {
+    border-radius: 0.5em;
+}
+
+#vec-cc-img button {
+    border-radius: 0.5em;
+}
+
+#vec-cc-img label {
+    border-radius: 0.5em;
+}

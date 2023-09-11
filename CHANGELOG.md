@@ -1,3 +1,6 @@
+### v1.4.1 - 2023 Sep.11
+- New **Contrast** algorithm
+
 ### v1.4.0 - 2023 Jul.11
 - Implement **Scaling** algorithm
 

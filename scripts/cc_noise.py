@@ -1,6 +1,10 @@
 from modules import devices
 import torch
 
+def get_delta(latent):
+    mean = torch.mean(latent)
+    return torch.sub(latent, mean)
+
 def to_abs(latent):
     return torch.abs(latent)
 

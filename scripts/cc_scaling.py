@@ -19,10 +19,10 @@ def apply_scaling(alg:str, current_step:int, total_steps:int, bri:float, con:flo
             mod = (1 - sin(rad))
 
     return [
-        round(bri * mod, 4),
-        round((con - 1) * mod + 1, 4),
-        round((sat - 1) * mod + 1, 4),
-        round(r * mod, 4),
-        round(g * mod, 4),
-        round(b * mod, 4)
+        bri * mod,
+        con * mod,
+        (sat - 1) * mod + 1,
+        r * mod,
+        g * mod,
+        b * mod
     ]

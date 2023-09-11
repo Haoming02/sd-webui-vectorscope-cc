@@ -7,7 +7,7 @@ import random
 from scripts.cc_noise import *
 
 from scripts.cc_xyz import xyz_support
-            
+
 from scripts.cc_scaling import apply_scaling
 
 from scripts.cc_version import VERSION
@@ -38,7 +38,7 @@ class VectorscopeCC(scripts.Script):
 
     def ui(self, is_img2img):
 
-        with gr.Accordion(f"Vectorscope CC {VERSION}", open=False):
+        with gr.Accordion(f"Vectorscope CC {VERSION}", elem_id='vec-cc-' + ('img' if is_img2img else 'txt'), open=False):
 
             with gr.Row():
                 enable = gr.Checkbox(label="Enable")
@@ -47,7 +47,7 @@ class VectorscopeCC(scripts.Script):
 
             with gr.Row():
                 bri = gr.Slider(label="Brightness", minimum=-6.0, maximum=6.0, step=0.1, value=0.0)
-                con = gr.Slider(label="Contrast", minimum=0.25, maximum=1.75, step=0.05, value=1.0)
+                con = gr.Slider(label="Contrast", minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
                 sat = gr.Slider(label="Saturation", minimum=0.25, maximum=1.75, step=0.05, value=1.0)
 
             with gr.Row():
@@ -65,23 +65,18 @@ class VectorscopeCC(scripts.Script):
             with gr.Accordion("Styles", open=False):
 
                 with gr.Row():
-                    with gr.Column():
-                        style_choice = gr.Dropdown(label="Styles", choices=style_manager.list_style())
-                        style_name = gr.Textbox(label="Style Name")
+                    style_choice = gr.Dropdown(label="Styles", choices=style_manager.list_style(), scale = 3)
+                    apply_btn = gr.Button(value="Apply Style", elem_id='cc-apply-' + ('img' if is_img2img else 'txt'), scale = 2)
+                    refresh_btn = gr.Button(value="Refresh Style", scale = 2)
+                with gr.Row():
+                    style_name = gr.Textbox(label="Style Name", scale = 3)
+                    save_btn = gr.Button(value="Save Style", elem_id='cc-save-' + ('img' if is_img2img else 'txt'), scale = 2)
+                    delete_btn = gr.Button(value="Delete Style", scale = 2)
 
-                    with gr.Column():
-                        with gr.Row(variant="compact"):
-                            apply_btn = gr.Button(value="Apply Style")
-                            refresh_btn = gr.Button(value="Refresh Style")
-                        with gr.Row(variant="compact"):
-                            save_btn = gr.Button(value="Save Style")
-                            delete_btn = gr.Button(value="Delete Style")
-
-                    apply_btn.click(fn=style_manager.get_style, inputs=style_choice, outputs=[latent, bri, con, sat, r, g, b])
-                    save_btn.click(fn=lambda *args: gr.update(choices=style_manager.save_style(*args)), inputs=[style_name, latent, bri, con, sat, r, g, b], outputs=style_choice)
-                    delete_btn.click(fn=lambda name: gr.update(choices=style_manager.delete_style(name)), inputs=style_name, outputs=style_choice)
-                    refresh_btn.click(fn=lambda _: gr.update(choices=style_manager.list_style()), outputs=style_choice)
-
+                apply_btn.click(fn=style_manager.get_style, inputs=style_choice, outputs=[latent, bri, con, sat, r, g, b])
+                save_btn.click(fn=lambda *args: gr.update(choices=style_manager.save_style(*args)), inputs=[style_name, latent, bri, con, sat, r, g, b], outputs=style_choice)
+                delete_btn.click(fn=lambda name: gr.update(choices=style_manager.delete_style(name)), inputs=style_name, outputs=style_choice)
+                refresh_btn.click(fn=lambda _: gr.update(choices=style_manager.list_style()), outputs=style_choice)
 
             with gr.Accordion("Advanced Settings", open=False):
                 doHR = gr.Checkbox(label="Process Hires. fix")
@@ -208,7 +203,7 @@ class VectorscopeCC(scripts.Script):
             p.extra_generation_params.update({f'Vec. CC [{VERSION}]': cc_params})
 
         bri /= steps
-        con = pow(con, 1.0 / steps)
+        con /= steps
         sat = pow(sat, 1.0 / steps)
         r /= steps
         g /= steps
@@ -272,7 +267,7 @@ class VectorscopeCC(scripts.Script):
                 B = [source[i, 3], target[i, 3]]
 
                 BRIGHTNESS[0] += BRIGHTNESS[1] * mods[0]
-                BRIGHTNESS[0] *= mods[1]
+                BRIGHTNESS[0] += get_delta(BRIGHTNESS[0]) * mods[1]
 
                 R[0] -= R[1] * mods[3]
                 G[0] += G[1] * mods[4]

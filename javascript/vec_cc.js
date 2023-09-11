@@ -4,8 +4,6 @@ function registerPicker(wheel, sliders) {
         var x = ((e.clientX - rect.left) - 100.0) / 25;
         var y = ((e.clientY - rect.top) - 100.0) / 25;
 
-        // console.log('(' + x + ', ' + y + ')')
-
         const zeta = Math.atan(y / x)
         var degree = 0
 
@@ -59,7 +57,7 @@ onUiLoaded(async () => {
         container.style.height = '200px'
         container.style.width = 'auto'
 
-        container.querySelector('.float').remove()
+        container.querySelector('.float')?.remove()
         container.querySelector('.download')?.remove()
         for (const downloadButton of container.querySelectorAll('[download]')) {
             downloadButton.parentElement.remove()
@@ -92,6 +90,13 @@ onUiLoaded(async () => {
 
         temp.remove()
 
-    })
+        const row1 = document.getElementById('cc-apply-' + mode).parentNode
+        const row2 = document.getElementById('cc-save-' + mode).parentNode
 
+        row1.style.alignItems = 'end'
+        row1.style.gap = '1em'
+        row2.style.alignItems = 'end'
+        row2.style.gap = '1em'
+
+    })
 })
