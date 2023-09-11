@@ -95,19 +95,19 @@ class VectorscopeCC(scripts.Script):
     def register_reset(self, reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method, scaling):
         for component in [enable, latent, doHR]:
             reset_btn.click(fn=lambda _: gr.update(value=False), outputs=component)
-        for component in [early, bri, r, g, b]:
+        for component in [early, bri, con, r, g, b]:
             reset_btn.click(fn=lambda _: gr.update(value=0.0), outputs=component)
-        for component in [con, sat]:
+        for component in [sat]:
             reset_btn.click(fn=lambda _: gr.update(value=1.0), outputs=component)
 
         reset_btn.click(fn=lambda _: gr.update(value='Straight Abs.'), outputs=method)
         reset_btn.click(fn=lambda _: gr.update(value='Flat'), outputs=scaling)
 
     def register_random(self, random_btn, bri, con, sat, r, g, b):
-        for component in [bri, r, g, b]:
-            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(-3.0, 3.0), 2)), outputs=component)
-        for component in [con, sat]:
-            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(0.25, 1.75), 2)), outputs=component)
+        for component in [bri, con, r, g, b]:
+            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(-2.5, 2.5), 2)), outputs=component)
+        for component in [sat]:
+            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(0.5, 1.5), 2)), outputs=component)
 
     def parse_bool(self, string:str):
         if string.lower() == "true":
@@ -124,16 +124,17 @@ class VectorscopeCC(scripts.Script):
         if not enable:
             if 'Enable' not in self.xyzCache.keys():
                 if len(self.xyzCache) > 0:
-                    print('\n\n[X/Y/Z Plot] x [Vec.CC] Extension is not Enabled!\n\n')
+                    print('\n[X/Y/Z Plot] x [Vec.CC] Extension is not Enabled!\n')
                 self.xyzCache.clear()
 
             KDiffusionSampler.callback_state = og_callback
             return p
 
         if 'Random' in self.xyzCache.keys():
-            print('\n\n[X/Y/Z Plot] x [Vec.CC] Randomize is Enabled!')
             if len(self.xyzCache) > 1:
-                print('Some settings will not apply!')
+                print('\n[X/Y/Z Plot] x [Vec.CC] Randomize is Enabled!\nSome settings will not apply!\n')
+            else:
+                print('\n[X/Y/Z Plot] x [Vec.CC] Randomize is Enabled!\n')
 
         cc_seed = None
 
@@ -198,7 +199,7 @@ class VectorscopeCC(scripts.Script):
         if stop < 1:
             return p
 
-        if shared.opts.cc_metadata and shared.opts.cc_metadata is True:
+        if hasattr(shared.opts, 'cc_metadata') and shared.opts.cc_metadata is True:
             cc_params = f'Alt: {latent}, Skip: {early}, Brightness: {bri}, Contrast: {con}, Saturation: {sat}, RGB: ({r}, {g}, {b}), Noise: {method}, Proc. Hr.F: {doHR}, Scaling: {scaling}'
             p.extra_generation_params.update({f'Vec. CC [{VERSION}]': cc_params})
 

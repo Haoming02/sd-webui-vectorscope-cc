@@ -1,3 +1,6 @@
+### v1.4.2 - 2023 Sep.11
+- Fix the Reset and Randomize buttons for the new Contrast algorithm
+
 ### v1.4.1 - 2023 Sep.11
 - New **Contrast** algorithm
 

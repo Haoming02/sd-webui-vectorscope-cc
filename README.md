@@ -176,7 +176,7 @@ Thus, I added a scaling option to modify the offset amount.
 - [ ] Add Gradient features
 
 <p align="center"><img src="samples/XYZ.jpg" width=768></p>
-<p align="center"><code>X/Y/Z Plot Support</code></p>
+<p align="center"><code>X/Y/Z Plot Support</code><br><i>(Outdated Contrast Value)</i></p>
 
 <p align="center"><img src="samples/Random.jpg" width=768></p>
 <p align="center">For <b>Randomize</b> in <code>X/Y/Z Plot</code>, the value is used as the random seed<br>
@@ -232,6 +232,8 @@ The Extension is named this way because the color interactions remind me of the 
 Those who are experienced in Color Correction should be rather familiar with this Extension.
 
 <p align="center"><img src="scripts/Vectorscope.png" width=256></p>
+
+<hr>
 
 <sup>~~Yes. I'm aware that it's just how digital colors work in general.~~<br>
 ~~We've come full **circle** *(\*ba dum tss)* now that a Color Wheel is actually added.~~</sup>
