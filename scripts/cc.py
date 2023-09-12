@@ -90,6 +90,26 @@ class VectorscopeCC(scripts.Script):
                 random_btn = gr.Button(value="Randomize")
                 self.register_random(random_btn, bri, con, sat, r, g, b)
 
+        self.infotext_fields = []
+        self.paste_field_names = []
+        self.infotext_fields = [
+            (enable, lambda d: enable.update(value=("Vec CC Enabled" in d))),
+            (latent, "Vec CC Alt"),
+            (early, "Vec CC Skip"),
+            (bri, "Vec CC Brightness"),
+            (con, "Vec CC Contrast"),
+            (sat, "Vec CC Saturation"),
+            (r, "Vec CC R"),
+            (g, "Vec CC G"),
+            (b, "Vec CC B"),
+            (method, "Vec CC Noise"),
+            (doHR, "Vec CC Proc HrF"),
+            (scaling, "Vec CC Scaling"),
+        ]
+
+        for _, name in self.infotext_fields:
+            self.paste_field_names.append(name)
+
         return [enable, latent, bri, con, sat, early, r, g, b, doHR, method, scaling]
 
     def register_reset(self, reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method, scaling):
@@ -200,8 +220,19 @@ class VectorscopeCC(scripts.Script):
             return p
 
         if hasattr(shared.opts, 'cc_metadata') and shared.opts.cc_metadata is True:
-            cc_params = f'Alt: {latent}, Skip: {early}, Brightness: {bri}, Contrast: {con}, Saturation: {sat}, RGB: ({r}, {g}, {b}), Noise: {method}, Proc. Hr.F: {doHR}, Scaling: {scaling}'
-            p.extra_generation_params.update({f'Vec. CC [{VERSION}]': cc_params})
+            p.extra_generation_params['Vec CC Enabled'] = True
+            p.extra_generation_params['Vec CC Alt'] = latent
+            p.extra_generation_params['Vec CC Skip'] = early
+            p.extra_generation_params['Vec CC Brightness'] = bri
+            p.extra_generation_params['Vec CC Contrast'] = con
+            p.extra_generation_params['Vec CC Saturation'] = sat
+            p.extra_generation_params['Vec CC R'] = r
+            p.extra_generation_params['Vec CC G'] = g
+            p.extra_generation_params['Vec CC B'] = b
+            p.extra_generation_params['Vec CC Noise'] = method
+            p.extra_generation_params['Vec CC Proc HrF'] = doHR
+            p.extra_generation_params['Vec CC Scaling'] = scaling
+            p.extra_generation_params['Vec CC Version'] = VERSION
 
         bri /= steps
         con /= steps
