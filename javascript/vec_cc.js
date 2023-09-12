@@ -1,5 +1,10 @@
 function registerPicker(wheel, sliders) {
-    wheel.onclick = function (e) {
+    wheel.onmousemove = function (e) {
+        e.preventDefault();
+        if (e.buttons != 1) {
+            return;
+        }
+
         const rect = e.target.getBoundingClientRect();
         var x = ((e.clientX - rect.left) - 100.0) / 25;
         var y = ((e.clientY - rect.top) - 100.0) / 25;
@@ -69,7 +74,7 @@ onUiLoaded(async () => {
         wheel.style.margin = 'auto'
         wheel.id = 'cc-img-' + mode
 
-        wheel.ondragstart = () => { return false; }
+        wheel.ondragstart = (e) => { e.preventDefault(); }
 
         sliders = [
             document.getElementById('cc-r-' + mode).querySelector('input'),
