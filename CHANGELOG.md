@@ -1,3 +1,7 @@
+### v1.4.5 - 2023 Sep.13
+- Bug Fix for Color Wheel in `img2img`
+- Minor Formatting
+
 ### v1.4.4 - 2023 Sep.13
 - Add **Infotext** Support by. **catboxanon**
 

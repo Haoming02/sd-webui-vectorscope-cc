@@ -220,7 +220,7 @@ class VectorscopeCC(scripts.Script):
             return p
 
         if hasattr(shared.opts, 'cc_metadata') and shared.opts.cc_metadata is True:
-            p.extra_generation_params['Vec CC Enabled'] = True
+            p.extra_generation_params['Vec CC Enabled'] = enable
             p.extra_generation_params['Vec CC Alt'] = latent
             p.extra_generation_params['Vec CC Skip'] = early
             p.extra_generation_params['Vec CC Brightness'] = bri

@@ -1,4 +1,4 @@
-function registerPicker(wheel, sliders) {
+function registerPicker(wheel, sliders, mode) {
     for (const event of ['mousemove', 'click']) {
         wheel.addEventListener(event, (e) => {
             e.preventDefault();
@@ -10,7 +10,7 @@ function registerPicker(wheel, sliders) {
                     return;
                 }
 
-                const dot = e.target.parentElement.querySelector('#cc-dot-txt');
+                const dot = e.target.parentElement.querySelector('#cc-dot-' + mode);
                 dot.style.position = 'fixed';
                 dot.style.left = e.x - (dot.width / 2) + 'px';
                 dot.style.top = e.y - (dot.height / 2) + 'px';
@@ -69,7 +69,7 @@ function registerPicker(wheel, sliders) {
     }
 
     wheel.addEventListener('mouseup', (e) => {
-        const dot = e.target.parentElement.querySelector('#cc-dot-txt');
+        const dot = e.target.parentElement.querySelector('#cc-dot-' + mode);
         dot.style.position = 'absolute';
         updateInput(sliders[0])
         updateInput(sliders[1])
@@ -79,9 +79,7 @@ function registerPicker(wheel, sliders) {
 
 onUiLoaded(async () => {
 
-    const Modes = ['txt', 'img']
-
-    Modes.forEach((mode) => {
+    ['txt', 'img'].forEach((mode) => {
 
         const container = document.getElementById('cc-colorwheel-' + mode)
         container.style.height = '200px'
@@ -107,7 +105,7 @@ onUiLoaded(async () => {
             document.getElementById('cc-b-' + mode).querySelector('input')
         ]
 
-        registerPicker(wheel, sliders)
+        registerPicker(wheel, sliders, mode)
 
         const temp = document.getElementById('cc-temp-' + mode)
 

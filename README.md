@@ -24,7 +24,7 @@ refer to the parameters and sample images below and play around with the values.
 
 #### Color Channels
 - Comes with a Color Wheel for visualization
-- You can also click on the Color Wheel to select a color directly
+- You can also click and drag on the Color Wheel to select a color directly
 
 <table>
     <thead align="center">
@@ -173,6 +173,7 @@ Thus, I added a scaling option to modify the offset amount.
 - [X] Implement better scaling algorithms
   - [X] Fix the **Brightness** issues *~~kinda~~*
 - [X] Add API Docs
+- [X] Add Infotext Support *(by. [catboxanon](https://github.com/catboxanon))*
 - [ ] Add Gradient features
 
 <p align="center"><img src="samples/XYZ.jpg" width=768></p>
