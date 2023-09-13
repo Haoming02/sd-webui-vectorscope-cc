@@ -1,50 +1,80 @@
 function registerPicker(wheel, sliders) {
-    wheel.onclick = function (e) {
-        const rect = e.target.getBoundingClientRect();
-        var x = ((e.clientX - rect.left) - 100.0) / 25;
-        var y = ((e.clientY - rect.top) - 100.0) / 25;
+    for (const event of ['mousemove', 'click']) {
+        wheel.addEventListener(event, (e) => {
+            e.preventDefault();
 
-        const zeta = Math.atan(y / x)
-        var degree = 0
+            const rect = e.target.getBoundingClientRect();
 
-        if (x >= 0) {
-            if (y >= 0)
-                degree = zeta * 180 / Math.PI
-            else
-                degree = 360 + zeta * 180 / Math.PI
-        }
-        else if (x < 0) {
-            degree = 180 + zeta * 180 / Math.PI
-        }
+            if (e.type != 'click') {
+                if (e.buttons != 1) {
+                    return;
+                }
 
-        // -0.5r - 0.5g + b = x
-        // -0.866r + 0.866g = y
-        // 240r + 120g = z * rgb
+                const dot = e.target.parentElement.querySelector('#cc-dot-txt');
+                dot.style.position = 'fixed';
+                dot.style.left = e.x - (dot.width / 2) + 'px';
+                dot.style.top = e.y - (dot.height / 2) + 'px';
+            }
 
-        // g = (1 / 0.866)y + r
-        // -0.5r - 0.5((1 / 0.866)y + r) + b = x
-        // b = x + 0.5r + 0.5((1 / 0.866)y + r)
+            x = ((e.clientX - rect.left) - 100.0) / 25;
+            y = ((e.clientY - rect.top) - 100.0) / 25;
 
-        // 240r + 120(1 / 0.866)y + r = z * r((1 / 0.866)y + r)(x + 0.5r + 0.5((1 / 0.866)y + r))
+            const zeta = Math.atan(y / x)
+            var degree = 0
 
-        var r = -(0.00077 * (433 * x * degree + 750 * y * degree) / degree)
-        var g = y / 0.866 + r
-        var b = x + 0.5 * r + 0.5 * g
+            if (x >= 0) {
+                if (y >= 0)
+                    degree = zeta * 180 / Math.PI
+                else
+                    degree = 360 + zeta * 180 / Math.PI
+            }
+            else if (x < 0) {
+                degree = 180 + zeta * 180 / Math.PI
+            }
 
-        const mag = Math.sqrt(r * r + g * g + b * b)
-        const len = Math.abs(r) + Math.abs(g) + Math.abs(b)
+            // -0.5r - 0.5g + b = x
+            // -0.866r + 0.866g = y
+            // 240r + 120g = z * rgb
 
-        r = r / mag * len
-        g = g / mag * len
-        b = b / mag * len
+            // g = (1 / 0.866)y + r
+            // -0.5r - 0.5((1 / 0.866)y + r) + b = x
+            // b = x + 0.5r + 0.5((1 / 0.866)y + r)
 
-        sliders[0].value = r.toFixed(2)
-        updateInput(sliders[0])
-        sliders[1].value = g.toFixed(2)
-        updateInput(sliders[1])
-        sliders[2].value = b.toFixed(2)
-        updateInput(sliders[2])
+            // 240r + 120(1 / 0.866)y + r = z * r((1 / 0.866)y + r)(x + 0.5r + 0.5((1 / 0.866)y + r))
+
+            var r = -(0.00077 * (433 * x * degree + 750 * y * degree) / degree)
+            var g = y / 0.866 + r
+            var b = x + 0.5 * r + 0.5 * g
+
+            const mag = Math.sqrt(r * r + g * g + b * b)
+            const len = Math.abs(r) + Math.abs(g) + Math.abs(b)
+
+            r = r / mag * len
+            g = g / mag * len
+            b = b / mag * len
+
+            sliders[0].value = r.toFixed(2)
+            sliders[0].closest('.gradio-slider').querySelector('input[type=range]').value = r.toFixed(2)
+            sliders[1].value = g.toFixed(2)
+            sliders[1].closest('.gradio-slider').querySelector('input[type=range]').value = g.toFixed(2)
+            sliders[2].value = b.toFixed(2)
+            sliders[2].closest('.gradio-slider').querySelector('input[type=range]').value = b.toFixed(2)
+
+            if (e.type == 'click') {
+                updateInput(sliders[0])
+                updateInput(sliders[1])
+                updateInput(sliders[2])
+            }
+        })
     }
+
+    wheel.addEventListener('mouseup', (e) => {
+        const dot = e.target.parentElement.querySelector('#cc-dot-txt');
+        dot.style.position = 'absolute';
+        updateInput(sliders[0])
+        updateInput(sliders[1])
+        updateInput(sliders[2])
+    })
 }
 
 onUiLoaded(async () => {
@@ -69,7 +99,7 @@ onUiLoaded(async () => {
         wheel.style.margin = 'auto'
         wheel.id = 'cc-img-' + mode
 
-        wheel.ondragstart = () => { return false; }
+        wheel.ondragstart = (e) => { e.preventDefault(); }
 
         sliders = [
             document.getElementById('cc-r-' + mode).querySelector('input'),

@@ -1,3 +1,6 @@
+### v1.4.3 - 2023 Sep.13
+- Improve **Color Wheel** Functionality by. **catboxanon**
+
 ### v1.4.2 - 2023 Sep.11
 - Fix the Reset and Randomize buttons for the new Contrast algorithm
 
