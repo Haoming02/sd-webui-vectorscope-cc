@@ -1,3 +1,6 @@
+### v1.4.4 - 2023 Sep.13
+- Add **Infotext** Support by. **catboxanon**
+
 ### v1.4.3 - 2023 Sep.13
 - Improve **Color Wheel** Functionality by. **catboxanon**
 
