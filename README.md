@@ -1,23 +1,20 @@
 ﻿# SD Webui Vectorscope CC
-This is an Extension for the [Automatic1111 Webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui), which performs *a kind of* **Offset Noise**[*](#offset-noise-tldr) natively. 
+This is an Extension for the [Automatic1111 Webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui), which performs a kind of **Offset Noise**[*](#offset-noise-tldr) natively,
+allowing you to adjust the brightness, contrast, and color of the generations.
 
 > [Sample Images](#sample-images)
 
 ## How to Use
-After installing this Extension, you will see a new section in both **txt2img** and **img2img** tabs, 
-refer to the parameters and sample images below and play around with the values.
+After installing this Extension, you will see a new section in both **txt2img** and **img2img** tabs. 
+Refer to the parameters and sample images below and play around with the values.
 
-**Note:** Since this modifies the underlying latent noise, the composition may change drastically.
+**Note:** Since this modifies the underlying latent noise, the composition may change drastically. Using the **Ones** scaling seems to reduce the variations.
 
 #### Parameters
-- **Enable:** Turn on & off this Extension
+- **Enable:** Turn on/off this Extension
 - **Alt:** Modify an alternative Tensor instead, causing the effects to be significantly stronger
 - **Skip:** Skip the last percentage of steps and only process the first few steps
-  - *Not as useful now that you can tune the [Scaling Settings](#scaling-settings)*
-
-<p align="center"><img src="samples/Skip.jpg" width=512></p>
-<p align="center">When <code>Alt.</code> is enabled, the image can get distorted at high value<br>Increase <code>Skip</code> to still achieve a stronger effect but without distortion</p>
-
+  - *Not as useful now since you can tune the [Scaling Settings](#scaling-settings) instead*
 - **Brightness:** Adjust the overall brightness of the image
 - **Contrast:** Adjust the overall contrast of the image
 - **Saturation:** Adjust the overall saturation of the image
@@ -65,10 +62,8 @@ refer to the parameters and sample images below and play around with the values.
 - Click **Refresh Style** to update the `Dropdown` if you edited the `styles.json` directly
 
 #### Advanced Settings
-
 - **Process Hires. fix:** By default, this Extension only functions during the **txt2img** phase, so that **Hires. fix** may "fix" the artifacts introduced during **txt2img**. Enable this to process **Hires. fix** phase too.
   - This option does not affect **img2img**
-  - **Note:** Keep the **txt2img** base `steps` higher than **Hires. fix** `steps` if you enable this
 
 ##### Noise Settings
 > let `x` denote the Tensor ; let `y` denote the operations
@@ -95,7 +90,7 @@ refer to the parameters and sample images below and play around with the values.
 
 ##### Scaling Settings
 Previously, this Extension offsets the noise by the same amount each step. 
-But due to the denoising process , this may produce undesired outcomes such as blurriness at high **Brightness** or noises at low **Brightness**.
+But due to the denoising process, this may produce undesired outcomes such as blurriness at high **Brightness** or noises at low **Brightness**.
 Thus, I added a scaling option to modify the offset amount.
 
 > Essentially, the "magnitude" of the default Tensor gets smaller every step, so offsetting by the same amount will have stronger effects at later steps. This is reversed on the `Alt.` Tensor however.
@@ -174,19 +169,20 @@ Thus, I added a scaling option to modify the offset amount.
   - [X] Fix the **Brightness** issues *~~kinda~~*
 - [X] Add API Docs
 - [X] Add Infotext Support *(by. [catboxanon](https://github.com/catboxanon))*
+- [X] ADD **HDR** Script
 - [ ] Add Gradient features
 
-<p align="center"><img src="samples/XYZ.jpg" width=768></p>
 <p align="center"><code>X/Y/Z Plot Support</code><br><i>(Outdated Contrast Value)</i></p>
+<p align="center"><img src="samples/XYZ.jpg" width=768></p>
 
+<p align="center"><code>X/Y/Z Plot w/ Randomize</code></p>
 <p align="center"><img src="samples/Random.jpg" width=768></p>
-<p align="center">For <b>Randomize</b> in <code>X/Y/Z Plot</code>, the value is used as the random seed<br>
-You can refer to the console to see the randomized values</p>
+<p align="center">The value is used as the random seed<br>You can refer to the console to see the randomized values</p>
 
 ## API
 You can use this Extension via [API](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API) by adding an entry in the `alwayson_scripts` of your payload. 
 An [example](samples/api_example.json) is provided.
-The `args` are the sent in the following order:
+The `args` are sent in the following order:
 
 - **[Enable, Alt, Brightness, Contrast, Saturation, R, G, B, Skip, Process Hires. Fix, Noise Settings, Scaling Settings]**
 > `bool`, `bool`, `float`, `float`, `float`, `float`, `float`, `float`, `float`, `bool`, `str`, `str`
@@ -195,9 +191,24 @@ The `args` are the sent in the following order:
 - Does not work with `DDIM`, `UniPC` samplers
 - Has little effect when used with certain **LoRA**s
 
+## HDR
+<p align="right"><i><b>BETA</b></i></p>
+
+> [Discussion Thread](https://github.com/Haoming02/sd-webui-vectorscope-cc/issues/16)
+
+- In the **Script** `Dropdown` at the bottom, there is now a new option: **`High Dynamic Range`**
+- This script will generate multiple images *("Brackets")* of varying brightness, then merge them into 1 HDR image
+- *Do provide feedback in the thread!*
+
+#### Settings
+- **Brackets:** The numer of images to generate
+- **Gaps:** The brightness difference between each image
+- **Automatically Merge:** When enabled, this will merge the images using a `OpenCV` algorithm and save to the `HDR` folder in the `outputs` folder; When disabled, this will return all images to the result section
+  - All the images are still saved to the `outputs` folder regardless
+
 <hr>
 
-#### Offset Noise TL;DR
+### Offset Noise TL;DR
 The most common *version* of **Offset Noise** you may have heard of is from this [blog post](https://www.crosslabs.org/blog/diffusion-with-offset-noise), 
 where it was discovered that the noise functions used during **training** were flawed, causing `Stable Diffusion` to always generate images with an average of `0.5`.
 
@@ -211,7 +222,7 @@ Though, the results may not be as good as using properly trained models.
 
 <hr>
 
-#### What is Under the Hood
+### What is Under the Hood
 After reading through and messing around with the code, 
 I found out that it is possible to directly modify the Tensors 
 representing the latent noise used by the Stable Diffusion process.
@@ -228,7 +239,7 @@ hence why you can control the brightness as well as the colors.
 
 <hr>
 
-#### Vectorscope?
+### Vectorscope?
 The Extension is named this way because the color interactions remind me of the `Vectorscope` found in **Premiere Pro**'s **Lumetri Color**.
 Those who are experienced in Color Correction should be rather familiar with this Extension.
 

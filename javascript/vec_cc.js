@@ -126,5 +126,11 @@ onUiLoaded(async () => {
         row2.style.alignItems = 'end'
         row2.style.gap = '1em'
 
+        // ----- HDR UIs -----
+        const hdr_settings = document.getElementById('vec-hdr-' + mode)
+        const buttons = hdr_settings.getElementsByTagName('label')
+
+        for (let i = 0; i < buttons.length; i++)
+            buttons[i].style.borderRadius = '0.5em'
     })
 })

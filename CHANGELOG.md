@@ -1,3 +1,6 @@
+### v1.4.6 - 2023 Sep.19
+- Add **HDR** Script
+
 ### v1.4.5 - 2023 Sep.13
 - Bug Fix for Color Wheel in `img2img`
 - Minor Formatting
