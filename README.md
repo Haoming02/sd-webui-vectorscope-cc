@@ -199,11 +199,12 @@ The `args` are sent in the following order:
 - In the **Script** `Dropdown` at the bottom, there is now a new option: **`High Dynamic Range`**
 - This script will generate multiple images *("Brackets")* of varying brightness, then merge them into 1 HDR image
 - *Do provide feedback in the thread!*
+- **Highly Recommended** to use a deterministic sampler and high enough steps. `Euler` *(**not** `Euler a`)* worked the best in my experience.
 
 #### Settings
 - **Brackets:** The numer of images to generate
 - **Gaps:** The brightness difference between each image
-- **Automatically Merge:** When enabled, this will merge the images using a `OpenCV` algorithm and save to the `HDR` folder in the `outputs` folder; When disabled, this will return all images to the result section
+- **Automatically Merge:** When enabled, this will merge the images using a `OpenCV` algorithm and save to the `HDR` folder in the `outputs` folder; When disabled, this will return all images to the result section, for when you have a more advanced program such as Photoshop to do the merging.
   - All the images are still saved to the `outputs` folder regardless
 
 <hr>
