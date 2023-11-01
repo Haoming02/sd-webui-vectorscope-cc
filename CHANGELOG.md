@@ -1,3 +1,6 @@
+### v1.4.7 - 2023 Nov.01
+- Removed **Skip** parameter
+
 ### v1.4.6 - 2023 Sep.19
 - Add **HDR** Script
 

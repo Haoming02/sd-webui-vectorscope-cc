@@ -13,8 +13,6 @@ Refer to the parameters and sample images below and play around with the values.
 #### Parameters
 - **Enable:** Turn on/off this Extension
 - **Alt:** Modify an alternative Tensor instead, causing the effects to be significantly stronger
-- **Skip:** Skip the last percentage of steps and only process the first few steps
-  - *Not as useful now since you can tune the [Scaling Settings](#scaling-settings) instead*
 - **Brightness:** Adjust the overall brightness of the image
 - **Contrast:** Adjust the overall contrast of the image
 - **Saturation:** Adjust the overall saturation of the image
@@ -184,8 +182,8 @@ You can use this Extension via [API](https://github.com/AUTOMATIC1111/stable-dif
 An [example](samples/api_example.json) is provided.
 The `args` are sent in the following order:
 
-- **[Enable, Alt, Brightness, Contrast, Saturation, R, G, B, Skip, Process Hires. Fix, Noise Settings, Scaling Settings]**
-> `bool`, `bool`, `float`, `float`, `float`, `float`, `float`, `float`, `float`, `bool`, `str`, `str`
+- **[Enable, Alt, Brightness, Contrast, Saturation, R, G, B, Process Hires. Fix, Noise Settings, Scaling Settings]**
+> `bool`, `bool`, `float`, `float`, `float`, `float`, `float`, `float`, `bool`, `str`, `str`
 
 ## Known Issues
 - Does not work with `DDIM`, `UniPC` samplers

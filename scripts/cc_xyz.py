@@ -25,7 +25,6 @@ def xyz_support(cache):
     extra_axis_options = [
         xyz_grid.AxisOption("[Vec.CC] Enable", str, apply_field("Enable"), choices=choices_bool),
         xyz_grid.AxisOption("[Vec.CC] Alt.", str, apply_field("Alt"), choices=choices_bool),
-        xyz_grid.AxisOption("[Vec.CC] Skip", float, apply_field("Skip")),
         xyz_grid.AxisOption("[Vec.CC] Brightness", float, apply_field("Brightness")),
         xyz_grid.AxisOption("[Vec.CC] Contrast", float, apply_field("Contrast")),
         xyz_grid.AxisOption("[Vec.CC] Saturation", float, apply_field("Saturation")),

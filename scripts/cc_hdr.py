@@ -65,7 +65,6 @@ class VectorHDR(scripts.Script):
         p.scripts.script('vectorscope cc').xyzCache.update({
             'Enable':'True',
             'Alt':'True',
-            'Skip': 0,
             'Brightness': 0,
             'DoHR': 'False',
             'Method': 'Ones',
@@ -87,7 +86,6 @@ class VectorHDR(scripts.Script):
             pc.scripts.script('vectorscope cc').xyzCache.update({
                 'Enable':'True',
                 'Alt':'True',
-                'Skip': 0,
                 'Brightness': brackets[it],
                 'DoHR': 'False',
                 'Method': 'Ones',

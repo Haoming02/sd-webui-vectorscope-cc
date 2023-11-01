@@ -43,8 +43,7 @@ class VectorscopeCC(scripts.Script):
 
             with gr.Row():
                 enable = gr.Checkbox(label="Enable")
-                latent = gr.Checkbox(label="Alt.")
-                early = gr.Slider(label="Skip", minimum=0.0, maximum=1.0, step=0.1, value=0.0)
+                latent = gr.Checkbox(label="Alt. (Stronger Effects)")
 
             with gr.Row():
                 bri = gr.Slider(label="Brightness", minimum=-6.0, maximum=6.0, step=0.1, value=0.0)
@@ -86,7 +85,7 @@ class VectorscopeCC(scripts.Script):
 
             with gr.Row():
                 reset_btn = gr.Button(value="Reset")
-                self.register_reset(reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method, scaling)
+                self.register_reset(reset_btn, enable, latent, bri, con, sat, r, g, b, doHR, method, scaling)
 
                 random_btn = gr.Button(value="Randomize")
                 self.register_random(random_btn, bri, con, sat, r, g, b)
@@ -96,7 +95,6 @@ class VectorscopeCC(scripts.Script):
         self.infotext_fields = [
             (enable, lambda d: enable.update(value=("Vec CC Enabled" in d))),
             (latent, "Vec CC Alt"),
-            (early, "Vec CC Skip"),
             (bri, "Vec CC Brightness"),
             (con, "Vec CC Contrast"),
             (sat, "Vec CC Saturation"),
@@ -111,12 +109,12 @@ class VectorscopeCC(scripts.Script):
         for _, name in self.infotext_fields:
             self.paste_field_names.append(name)
 
-        return [enable, latent, bri, con, sat, early, r, g, b, doHR, method, scaling]
+        return [enable, latent, bri, con, sat, r, g, b, doHR, method, scaling]
 
-    def register_reset(self, reset_btn, enable, latent, bri, con, sat, early, r, g, b, doHR, method, scaling):
+    def register_reset(self, reset_btn, enable, latent, bri, con, sat, r, g, b, doHR, method, scaling):
         for component in [enable, latent, doHR]:
             reset_btn.click(fn=lambda _: gr.update(value=False), outputs=component)
-        for component in [early, bri, con, r, g, b]:
+        for component in [bri, con, r, g, b]:
             reset_btn.click(fn=lambda _: gr.update(value=0.0), outputs=component)
         for component in [sat]:
             reset_btn.click(fn=lambda _: gr.update(value=1.0), outputs=component)
@@ -138,7 +136,7 @@ class VectorscopeCC(scripts.Script):
 
         raise ValueError(f"Invalid Value: {string}")
 
-    def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, early:float, r:float, g:float, b:float, doHR:bool, method:str, scaling:str):
+    def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, r:float, g:float, b:float, doHR:bool, method:str, scaling:str):
         if 'Enable' in self.xyzCache.keys():
             enable = self.parse_bool(self.xyzCache['Enable'])
 
@@ -169,8 +167,6 @@ class VectorscopeCC(scripts.Script):
                     con = v
                 case 'Saturation':
                     sat = v
-                case 'Skip':
-                    early = v
                 case 'R':
                     r = v
                 case 'G':
@@ -196,8 +192,6 @@ class VectorscopeCC(scripts.Script):
         if not hasattr(p, 'enable_hr') and hasattr(p, 'denoising_strength') and not shared.opts.img2img_fix_steps:
             steps = int(steps * p.denoising_strength)
 
-        stop = steps * (1.0 - early)
-
         if cc_seed is not None:
             random.seed(cc_seed)
 
@@ -217,13 +211,9 @@ class VectorscopeCC(scripts.Script):
             print(f'G:\t\t{g}')
             print(f'B:\t\t{b}\n')
 
-        if stop < 1:
-            return p
-
         if hasattr(shared.opts, 'cc_metadata') and shared.opts.cc_metadata is True:
             p.extra_generation_params['Vec CC Enabled'] = enable
             p.extra_generation_params['Vec CC Alt'] = latent
-            p.extra_generation_params['Vec CC Skip'] = early
             p.extra_generation_params['Vec CC Brightness'] = bri
             p.extra_generation_params['Vec CC Contrast'] = con
             p.extra_generation_params['Vec CC Saturation'] = sat
@@ -265,9 +255,6 @@ class VectorscopeCC(scripts.Script):
 
                     if p.hr_pass == 2:
                         return og_callback(self, d)
-
-            if d["i"] > stop:
-                return og_callback(self, d)
 
             source = d[mode]
 
