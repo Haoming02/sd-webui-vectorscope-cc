@@ -134,6 +134,7 @@ class VectorscopeCC(scripts.Script):
         raise ValueError(f"Invalid Value: {string}")
 
     def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, r:float, g:float, b:float, doHR:bool, method:str, scaling:str):
+        KDiffusionSampler.isHR_Pass = False
         if 'Enable' in self.xyzCache.keys():
             enable = self.parse_bool(self.xyzCache['Enable'])
 
@@ -237,21 +238,8 @@ class VectorscopeCC(scripts.Script):
         # Channel 2:    Violet  |   Yellow
 
         def callback_state(self, d):
-            if not doHR:
-                if hasattr(p, 'enable_hr') and p.enable_hr:
-                    if not hasattr(p, 'hr_pass'):
-                        p.hr_pass = 0
-
-                    if p.hr_pass == 0:
-                        if d["i"] == 0:
-                            p.hr_pass = 1
-
-                    elif p.hr_pass == 1:
-                        if d["i"] == 0:
-                            p.hr_pass = 2
-
-                    if p.hr_pass == 2:
-                        return og_callback(self, d)
+            if not doHR and self.isHR_Pass is True:
+                return og_callback(self, d)
 
             source = d[mode]
 
@@ -299,9 +287,8 @@ class VectorscopeCC(scripts.Script):
         KDiffusionSampler.callback_state = callback_state
         return p
 
-    def postprocess_image(self, p, *args):
-        if hasattr(p, 'hr_pass'):
-            del p.hr_pass
+    def before_hr(self, p, *args):
+        KDiffusionSampler.isHR_Pass = True
 
     def postprocess(self, p, processed, *args):
         KDiffusionSampler.callback_state = og_callback

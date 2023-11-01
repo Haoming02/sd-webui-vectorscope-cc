@@ -1,3 +1,6 @@
+### v1.4.10 - 2023 Nov.01
+- Better **Hires. fix** logic
+
 ### v1.4.9 - 2023 Nov.01
 - Improve Sliders values refresh 
 
