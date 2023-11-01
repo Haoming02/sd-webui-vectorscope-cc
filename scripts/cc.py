@@ -12,7 +12,6 @@ from scripts.cc_xyz import xyz_support
 from scripts.cc_scaling import apply_scaling
 
 from scripts.cc_version import VERSION
-from scripts.cc_version import clean_outdated
 
 from scripts.cc_colorpicker import create_colorpicker
 from scripts.cc_colorpicker import horizontal_js
@@ -26,9 +25,6 @@ og_callback = KDiffusionSampler.callback_state
 
 class VectorscopeCC(scripts.Script):
     def __init__(self):
-        clean_outdated('cc.py')
-        clean_outdated('cc_hdr.py')
-
         self.xyzCache = {}
         xyz_support(self.xyzCache)
 

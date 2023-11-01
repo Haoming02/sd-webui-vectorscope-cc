@@ -1,7 +1,8 @@
+from modules import script_callbacks
 import modules.scripts as scripts
 import json
 
-VERSION = 'v1.4.8'
+VERSION = 'v1.4.9'
 
 def clean_outdated(EXT_NAME:str):
     with open(scripts.basedir() + '/' + 'ui-config.json', 'r') as json_file:
@@ -11,3 +12,9 @@ def clean_outdated(EXT_NAME:str):
 
     with open(scripts.basedir() + '/' + 'ui-config.json', 'w') as json_file:
         json.dump(cleaned_configs, json_file)
+
+def refresh_sliders():
+    clean_outdated('cc.py')
+    clean_outdated('cc_hdr.py')
+
+script_callbacks.on_before_ui(refresh_sliders)

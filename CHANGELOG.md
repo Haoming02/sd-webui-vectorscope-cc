@@ -1,3 +1,6 @@
+### v1.4.9 - 2023 Nov.01
+- Improve Sliders values refresh 
+
 ### v1.4.8 - 2023 Nov.01
 - Removed "**magic numbers**"
 
