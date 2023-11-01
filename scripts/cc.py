@@ -1,5 +1,6 @@
 from modules.sd_samplers_kdiffusion import KDiffusionSampler
 import modules.scripts as scripts
+import scripts.cc_const as const
 from modules import shared
 import gradio as gr
 import random
@@ -46,15 +47,15 @@ class VectorscopeCC(scripts.Script):
                 latent = gr.Checkbox(label="Alt. (Stronger Effects)")
 
             with gr.Row():
-                bri = gr.Slider(label="Brightness", minimum=-6.0, maximum=6.0, step=0.1, value=0.0)
-                con = gr.Slider(label="Contrast", minimum=-2.5, maximum=2.5, step=0.05, value=0.0)
-                sat = gr.Slider(label="Saturation", minimum=0.25, maximum=1.75, step=0.05, value=1.0)
+                bri = gr.Slider(label="Brightness", minimum=const.Brightness.minimum, maximum=const.Brightness.maximum, step=0.1, value=const.Brightness.default)
+                con = gr.Slider(label="Contrast", minimum=const.Contrast.minimum, maximum=const.Contrast.maximum, step=0.05, value=const.Contrast.default)
+                sat = gr.Slider(label="Saturation", minimum=const.Saturation.minimum, maximum=const.Saturation.maximum, step=0.05, value=const.Saturation.default)
 
             with gr.Row():
                 with gr.Column():
-                    r = gr.Slider(label="R", info='Cyan | Red', minimum=-3.0, maximum=3.0, step=0.05, value=0.0, elem_id='cc-r-' + ('img' if is_img2img else 'txt'))
-                    g = gr.Slider(label="G", info='Magenta | Green',minimum=-3.0, maximum=3.0, step=0.05, value=0.0, elem_id='cc-g-' + ('img' if is_img2img else 'txt'))
-                    b = gr.Slider(label="B", info='Yellow | Blue',minimum=-3.0, maximum=3.0, step=0.05, value=0.0, elem_id='cc-b-' + ('img' if is_img2img else 'txt'))
+                    r = gr.Slider(label="R", info='Cyan | Red', minimum=const.R.minimum, maximum=const.R.maximum, step=0.05, value=const.R.default, elem_id='cc-r-' + ('img' if is_img2img else 'txt'))
+                    g = gr.Slider(label="G", info='Magenta | Green',minimum=const.G.minimum, maximum=const.G.maximum, step=0.05, value=const.G.default, elem_id='cc-g-' + ('img' if is_img2img else 'txt'))
+                    b = gr.Slider(label="B", info='Yellow | Blue',minimum=const.B.minimum, maximum=const.B.maximum, step=0.05, value=const.B.default, elem_id='cc-b-' + ('img' if is_img2img else 'txt'))
 
                 create_colorpicker(is_img2img)
 
@@ -117,16 +118,16 @@ class VectorscopeCC(scripts.Script):
         for component in [bri, con, r, g, b]:
             reset_btn.click(fn=lambda _: gr.update(value=0.0), outputs=component)
         for component in [sat]:
-            reset_btn.click(fn=lambda _: gr.update(value=1.0), outputs=component)
+            reset_btn.click(fn=lambda _: gr.update(value=const.Saturation.default), outputs=component)
 
         reset_btn.click(fn=lambda _: gr.update(value='Straight Abs.'), outputs=method)
         reset_btn.click(fn=lambda _: gr.update(value='Flat'), outputs=scaling)
 
     def register_random(self, random_btn, bri, con, sat, r, g, b):
         for component in [bri, con, r, g, b]:
-            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(-2.5, 2.5), 2)), outputs=component)
+            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(const.R.minimum, const.R.maximum), 2)), outputs=component)
         for component in [sat]:
-            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(0.5, 1.5), 2)), outputs=component)
+            random_btn.click(fn=lambda _: gr.update(value=round(random.uniform(const.Saturation.minimum, const.Saturation.maximum), 2)), outputs=component)
 
     def parse_bool(self, string:str):
         if string.lower() == "true":
@@ -195,13 +196,13 @@ class VectorscopeCC(scripts.Script):
         if cc_seed is not None:
             random.seed(cc_seed)
 
-            bri = round(random.uniform(-3.0, 3.0), 2)
-            r = round(random.uniform(-3.0, 3.0), 2)
-            g = round(random.uniform(-3.0, 3.0), 2)
-            b = round(random.uniform(-3.0, 3.0), 2)
+            bri = round(random.uniform(const.Contrast.minimum, const.Contrast.maximum), 2)
+            con = round(random.uniform(const.Contrast.minimum, const.Contrast.maximum), 2)
+            r = round(random.uniform(const.R.minimum, const.R.maximum), 2)
+            g = round(random.uniform(const.G.minimum, const.G.maximum), 2)
+            b = round(random.uniform(const.B.minimum, const.B.maximum), 2)
 
-            con = round(random.uniform(0.25, 1.75), 2)
-            sat = round(random.uniform(0.25, 1.75), 2)
+            sat = round(random.uniform(const.Saturation.minimum, const.Saturation.maximum), 2)
 
             print(f'-> Seed: {cc_seed}')
             print(f'Brightness:\t{bri}')

@@ -1,4 +1,5 @@
 import modules.scripts as scripts
+import scripts.cc_const as const
 import json
 
 STYLE_FILE = scripts.basedir() + '/' + 'styles.json'
@@ -35,7 +36,7 @@ class StyleManager():
 			return style['alt'], style['brightness'], style['contrast'], style['saturation'], style['rgb'][0], style['rgb'][1], style['rgb'][2]
 		except KeyError:
 			print(f'\n[Warning] No Style of Name "{style_name}" Found!\n')
-			return False, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0
+			return False, const.Brightness.default, const.Contrast.default, const.Saturation.default, const.R.default, const.G.default, const.B.default
 
 	def save_style(self, style_name, latent, bri, con, sat, r, g, b):
 		if style_name in self.STYLE_SHEET['styles'].keys():
