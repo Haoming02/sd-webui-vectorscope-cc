@@ -1,3 +1,6 @@
+### v1.5.0 - 2023 Nov.08
+- Rewrote **Callback** logic *(`internal`)*
+
 ### v1.4.10 - 2023 Nov.01
 - Better **Hires. fix** logic
 

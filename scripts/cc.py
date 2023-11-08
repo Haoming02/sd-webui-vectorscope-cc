@@ -5,11 +5,7 @@ from modules import shared
 import gradio as gr
 import random
 
-from scripts.cc_noise import *
-
 from scripts.cc_xyz import xyz_support
-
-from scripts.cc_scaling import apply_scaling
 
 from scripts.cc_version import VERSION
 
@@ -20,8 +16,6 @@ from scripts.cc_colorpicker import vertical_js
 from scripts.cc_style import StyleManager
 style_manager = StyleManager()
 style_manager.load_styles()
-
-og_callback = KDiffusionSampler.callback_state
 
 class VectorscopeCC(scripts.Script):
     def __init__(self):
@@ -82,12 +76,11 @@ class VectorscopeCC(scripts.Script):
 
             with gr.Row():
                 reset_btn = gr.Button(value="Reset")
-                self.register_reset(reset_btn, enable, latent, bri, con, sat, r, g, b, doHR, method, scaling)
+                self.register_reset(reset_btn, latent, bri, con, sat, r, g, b, doHR, method, scaling)
 
                 random_btn = gr.Button(value="Randomize")
                 self.register_random(random_btn, bri, con, sat, r, g, b)
 
-        self.infotext_fields = []
         self.paste_field_names = []
         self.infotext_fields = [
             (enable, lambda d: enable.update(value=("Vec CC Enabled" in d))),
@@ -108,8 +101,8 @@ class VectorscopeCC(scripts.Script):
 
         return [enable, latent, bri, con, sat, r, g, b, doHR, method, scaling]
 
-    def register_reset(self, reset_btn, enable, latent, bri, con, sat, r, g, b, doHR, method, scaling):
-        for component in [enable, latent, doHR]:
+    def register_reset(self, reset_btn, latent, bri, con, sat, r, g, b, doHR, method, scaling):
+        for component in [latent, doHR]:
             reset_btn.click(fn=lambda _: gr.update(value=False), outputs=component)
         for component in [bri, con, r, g, b]:
             reset_btn.click(fn=lambda _: gr.update(value=0.0), outputs=component)
@@ -135,6 +128,7 @@ class VectorscopeCC(scripts.Script):
 
     def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, r:float, g:float, b:float, doHR:bool, method:str, scaling:str):
         KDiffusionSampler.isHR_Pass = False
+
         if 'Enable' in self.xyzCache.keys():
             enable = self.parse_bool(self.xyzCache['Enable'])
 
@@ -144,7 +138,7 @@ class VectorscopeCC(scripts.Script):
                     print('\n[X/Y/Z Plot] x [Vec.CC] Extension is not Enabled!\n')
                 self.xyzCache.clear()
 
-            KDiffusionSampler.callback_state = og_callback
+            KDiffusionSampler.vec_cc = {'enable': False}
             return p
 
         if 'Random' in self.xyzCache.keys():
@@ -183,7 +177,7 @@ class VectorscopeCC(scripts.Script):
         self.xyzCache.clear()
 
         if method == 'Disabled':
-            KDiffusionSampler.callback_state = og_callback
+            KDiffusionSampler.vec_cc = {'enable': False}
             return p
 
         steps = p.steps
@@ -232,63 +226,22 @@ class VectorscopeCC(scripts.Script):
 
         mode = 'x' if latent else 'denoised'
 
-        # Channel 0:    Dark    |   Bright
-        # Channel 1:    Purple  |   Green
-        # Channel 2:    Red     |   Cyan
-        # Channel 2:    Violet  |   Yellow
+        KDiffusionSampler.vec_cc = {
+            'enable': True,
+            'mode' : mode,
+            'bri': bri,
+            'con': con,
+            'sat': sat,
+            'r': r,
+            'g': g,
+            'b': b,
+            'method': method,
+            'doHR': doHR,
+            'scaling': scaling,
+            'step': steps
+        }
 
-        def callback_state(self, d):
-            if not doHR and self.isHR_Pass is True:
-                return og_callback(self, d)
-
-            source = d[mode]
-
-            # "Straight", "Straight Abs.", "Cross", "Cross Abs.", "Ones", "N.Random", "U.Random", "Multi-Res", "Multi-Res Abs."
-            if 'Straight' in method:
-                target = d[mode]
-            elif 'Cross' in method:
-                cross = 'x' if mode == 'denoised' else 'denoised'
-                target = d[cross]
-            elif 'Multi-Res' in method:
-                target = multires_noise(d[mode], 'Abs' in method)
-            elif method == 'Ones':
-                target = ones(d[mode])
-            elif method == 'N.Random':
-                target = normal_noise(d[mode])
-            elif method ==  'U.Random':
-                target = gaussian_noise(d[mode])
-
-            if 'Abs' in method:
-                target = to_abs(target)
-
-            batchSize = d[mode].size(0)
-
-            mods = apply_scaling(scaling, d["i"], steps, bri, con, sat, r, g, b)
-
-            for i in range(batchSize):
-                BRIGHTNESS = [source[i, 0], target[i, 0]]
-                R = [source[i, 2], target[i, 2]]
-                G = [source[i, 1], target[i, 1]]
-                B = [source[i, 3], target[i, 3]]
-
-                BRIGHTNESS[0] += BRIGHTNESS[1] * mods[0]
-                BRIGHTNESS[0] += get_delta(BRIGHTNESS[0]) * mods[1]
-
-                R[0] -= R[1] * mods[3]
-                G[0] += G[1] * mods[4]
-                B[0] -= B[1] * mods[5]
-
-                R[0] *= mods[2]
-                G[0] *= mods[2]
-                B[0] *= mods[2]
-
-            return og_callback(self, d)
-
-        KDiffusionSampler.callback_state = callback_state
         return p
 
     def before_hr(self, p, *args):
         KDiffusionSampler.isHR_Pass = True
-
-    def postprocess(self, p, processed, *args):
-        KDiffusionSampler.callback_state = og_callback

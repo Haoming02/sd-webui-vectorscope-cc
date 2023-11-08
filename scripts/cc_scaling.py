@@ -1,6 +1,4 @@
-from math import cos
-from math import sin
-from math import pi
+from math import cos, sin, pi
 
 def apply_scaling(alg:str, current_step:int, total_steps:int, bri:float, con:float, sat:float, r:float, g:float, b:float):
     ratio = float(current_step / total_steps)
