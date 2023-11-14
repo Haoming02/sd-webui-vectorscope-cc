@@ -1,4 +1,5 @@
 from modules.sd_samplers_kdiffusion import KDiffusionSampler
+from modules import script_callbacks
 from scripts.cc_scaling import apply_scaling
 from scripts.cc_noise import *
 
@@ -60,3 +61,8 @@ def cc_callback(self, d):
     return original_callback(self, d)
 
 KDiffusionSampler.callback_state = cc_callback
+
+def restore_callback():
+    KDiffusionSampler.callback_state = original_callback
+
+script_callbacks.on_script_unloaded(restore_callback)
