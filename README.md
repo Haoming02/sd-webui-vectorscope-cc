@@ -2,6 +2,8 @@
 This is an Extension for the [Automatic1111 Webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui), which performs a kind of **Offset Noise**[*](#offset-noise-tldr) natively,
 allowing you to adjust the brightness, contrast, and color of the generations.
 
+**Important:** The color currently only works for **SD 1.5** Checkpoints
+
 > [Sample Images](#sample-images)
 
 ## How to Use
@@ -169,6 +171,7 @@ Thus, I added a scaling option to modify the offset amount.
 - [X] Add Infotext Support *(by. [catboxanon](https://github.com/catboxanon))*
 - [X] ADD **HDR** Script
 - [ ] Add Gradient features
+- [ ] Add SDXL Support
 
 <p align="center"><code>X/Y/Z Plot Support</code><br><i>(Outdated Contrast Value)</i></p>
 <p align="center"><img src="samples/XYZ.jpg" width=768></p>
@@ -188,6 +191,7 @@ The `args` are sent in the following order:
 ## Known Issues
 - Does not work with `DDIM`, `UniPC` samplers
 - Has little effect when used with certain **LoRA**s
+- Colors are incorrect when using SDXL checkpoints
 
 ## HDR
 <p align="right"><i><b>BETA</b></i></p>

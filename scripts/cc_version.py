@@ -2,7 +2,7 @@ from modules import script_callbacks
 import modules.scripts as scripts
 import json
 
-VERSION = 'v1.5.0'
+VERSION = 'v1.5.1'
 
 def clean_outdated(EXT_NAME:str):
     with open(scripts.basedir() + '/' + 'ui-config.json', 'r', encoding='utf8') as json_file:

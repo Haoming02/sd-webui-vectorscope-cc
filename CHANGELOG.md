@@ -1,3 +1,6 @@
+### v1.5.1 - 2023 Dec.03
+- Bug Fix by. **catboxanon**
+
 ### v1.5.0 - 2023 Nov.08
 - Rewrote **Callback** logic *(`internal`)*
 
