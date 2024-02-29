@@ -1,3 +1,6 @@
+### v2.0.0 - 2024 Feb.29
+- Removed **LFS**
+
 ### v1.5.1 - 2023 Dec.03
 - Bug Fix by. **catboxanon**
 
