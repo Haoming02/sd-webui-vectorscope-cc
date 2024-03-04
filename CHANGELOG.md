@@ -1,4 +1,7 @@
-### v2.0.0 - 2024 Mar.01
+### v2.0.0 - 2024 Mar.04
+- Support **SDXL**
+
+### v2.0.gamma - 2024 Mar.01
 - Major **Rewrite** & **Optimization**
 
 ### v2.0.beta - 2024 Feb.29

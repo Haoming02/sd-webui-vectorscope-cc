@@ -4,7 +4,7 @@ allowing you to adjust the brightness, contrast, and color of the generations.
 
 > Also compatible with [Forge](https://github.com/lllyasviel/stable-diffusion-webui-forge)!
 
-**Important:** The color currently only works for **SD 1.5** Checkpoints
+> Now supports SDXL!
 
 > [Sample Images](#sample-images)
 
@@ -12,7 +12,7 @@ allowing you to adjust the brightness, contrast, and color of the generations.
 After installing this Extension, you will see a new section in both **txt2img** and **img2img** tabs. 
 Refer to the parameters and sample images below and play around with the values.
 
-**Note:** Since this modifies the underlying latent noise, the composition may change drastically. Using the **Ones** scaling seems to reduce the variations.
+**Note:** Since this modifies the underlying latent noise, the composition may change drastically.
 
 #### Parameters
 - **Enable:** Turn on/off this Extension
@@ -85,15 +85,16 @@ Refer to the parameters and sample images below and play around with the values.
 - **Abs:** Calculate using the absolute values of the chosen Tensors instead
   - `x += abs(F) * y`
 
-<p align="center"><img src="samples/Bright.jpg" width=768></p>
-<p align="center"><img src="samples/Dark.jpg" width=768></p>
+<p align="center">
+<img src="samples/Method.jpg">
+</p>
 
 #### Scaling Settings
 By default, this Extension offsets the noise by the same amount each step.
 But due to the denoising process, this may produce undesired outcomes such as blurriness at high **Brightness** or noises at low **Brightness**.
 Therefore, I added a scaling option to modify the offset amount throughout the process.
 
-> Essentially, the "magnitude" of the default Tensor gets smaller every step, so offsetting by the same amount will have stronger effects at later steps. This is reversed on the `Alt.` Tensor however.
+> Essentially, the "magnitude" of the default Tensor gets smaller every step, so offsetting by the same amount will have stronger effects at the later steps.
 
 - **Flat:** Default behavior. Same amount each step.
 - **Cos:** Cosine scaling. *(High -> Low)*
@@ -101,60 +102,33 @@ Therefore, I added a scaling option to modify the offset amount throughout the p
 - **1 - Cos:** *(Low -> High)*
 - **1 - Sin:** *(High -> Low)*
 
-> In my experience, **`1 - Sin`** works better for the **default** Tensor while **`1 - Cos`** works better for the **Alt.** Tensor
-
 <p align="center">
-<code>Alt. Disabled</code><br>
-<img src="samples/Scaling.jpg" width=768>
+<img src="samples/Scaling.jpg">
 </p>
-
-<p align="center">
-<code>Alt. Enabled</code><br>
-<img src="samples/Scaling_alt.jpg" width=768>
-</p>
-
-<p align="center"><i>Notice the blurriness and the noises on <code>Flat</code> scaling</i></p>
 
 ## Sample Images
-- **Checkpoint:** [UHD-23](https://civitai.com/models/22371/uhd-23)
-- **Pos. Prompt:** `(masterpiece, best quality), 1girl, solo, night, street, city, neon_lights`
-- **Neg. Prompt:** `(low quality, worst quality:1.2)`, [`EasyNegative`](https://huggingface.co/datasets/gsdf/EasyNegative/tree/main), [`EasyNegativeV2`](https://huggingface.co/gsdf/Counterfeit-V3.0/tree/main/embedding)
-- `Euler a`; `20 steps`; `7.5 CFG`; `Hires. fix`; `Latent (nearest)`; `16 H.steps`; `0.6 D.Str.`; `Seed:`**`3814649974`**
-- `Straight Abs.`
+- **Checkpoint:** [Animagine XL V3](https://civitai.com/models/260267)
+- **Pos. Prompt:** `[high quality, best quality], 1girl, solo, casual, night, street, city, <lora:SDXL_Lightning_8steps:1>`
+- **Neg. Prompt:** `lowres, [low quality, worst quality], jpeg`
+- `Euler A SGMUniform`; `10 steps`; `2.0 CFG`; **Seed:** `2836968120`
+- `Straight Abs.` ; `Flat`
 
 <p align="center">
-<b>Base</b><br>
-<code>Extension Disabled</code><br>
-<img src="samples/00.jpg" width=512>
+<code>Disabled</code><br>
+<img src="samples/00.jpg" width=768>
 </p>
 
 <p align="center">
-<b>Dark</b><br>
-<code><b>Brightness:</b> -3; <b>Contrast:</b> 1.5</code><br>
-<img src="samples/01.jpg" width=512>
+<code>Brightness: 2.5 ; Contrast: -0.5 ; Saturation: 1.5<br>
+R: 2.5; G: 2.5; B: -4</code><br>
+<img src="samples/01.jpg" width=768>
 </p>
 
 <p align="center">
-<b>Bright</b><br>
-<code><b>Brightness:</b> 2.5; <b>Contrast:</b> 0.5; <b>Alt:</b> Enabled</code><br>
-<img src="samples/02.jpg" width=512>
+<code>Brightness: -2.5 ; Contrast: 0.5 ; Saturation: 1.5<br>
+R: -1; G: -1; B: 2.5</code><br>
+<img src="samples/02.jpg" width=768>
 </p>
-
-<p align="center">
-<b>Chill</b><br>
-<code><b>Brightness:</b> -2.5; <b>Contrast:</b> 1.25</code><br>
-<code><b>R:</b> -1.5; <b>B:</b> 2.5</code><br>
-<img src="samples/03.jpg" width=512>
-</p>
-
-<p align="center">
-<b><s>Mexican Movie</s></b><br>
-<code><b>Brightness:</b> 3; <b>Saturation:</b> 1.5</code><br>
-<code><b>R:</b> 2; <b>G:</b> 1; <b>B:</b> -2</code><br>
-<img src="samples/04.jpg" width=512>
-</p>
-
-<p align="center"><i>Notice the significant differences even when using the same seed</i></p>
 
 ## Roadmap
 - [X] Extension Released
@@ -169,15 +143,18 @@ Therefore, I added a scaling option to modify the offset amount throughout the p
   - You can enable this in the **Infotext** section of the **Settings** tab
 - [X] Add Infotext Support *(by. [catboxanon](https://github.com/catboxanon))*
 - [X] ADD **HDR** Script
+- [X] Add SDXL Support
 - [ ] Add Gradient features
-- [ ] Add SDXL Support
 
-<p align="center"><code>X/Y/Z Plot Support</code><br><i>(Outdated Contrast Value)</i></p>
-<p align="center"><img src="samples/XYZ.jpg" width=768></p>
+<p align="center">
+<code>X/Y/Z Plot Support</code><br>
+<img src="samples/XYZ.jpg">
+</p>
 
-<p align="center"><code>X/Y/Z Plot w/ Randomize</code></p>
-<p align="center"><img src="samples/Random.jpg" width=768></p>
-<p align="center">The value is used as the random seed<br>You can refer to the console to see the randomized values</p>
+<p align="center">
+<code>Randomize</code><br>
+<img src="samples/Random.jpg"><br>
+The value is used as the random seed<br>You can refer to the console to see the randomized values</p>
 
 ## API
 You can use this Extension via [API](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API) by adding an entry to the `alwayson_scripts` of your payload. 
@@ -197,9 +174,8 @@ The `args` are sent in the following order in an `array`:
 - **Scaling Settings:** `str`
 
 ## Known Issues
-- Does **not** work with `DDIM`, `UniPC` samplers
+- Does **not** work with `DDIM`, `UniPC`, `Euler` samplers
 - Has little effect when used with certain **LoRA**s
-- Colors are incorrect when using SDXL checkpoints
 
 ## HDR
 <p align="right"><i><b>BETA</b></i></p>

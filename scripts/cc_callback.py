@@ -62,6 +62,14 @@ class NoiseMethods:
         return noise / noise.std()
 
 
+def RGB_2_CbCr(r:float, g:float, b:float) -> float:
+    """Convert RGB channels into YCbCr for SDXL"""
+    cb = -0.15 * r - 0.29 * g + 0.44 * b
+    cr = 0.44 * r - 0.37 * g - 0.07 * b
+
+    return cb, cr
+
+
 original_callback = KDiffusionSampler.callback_state
 
 @torch.no_grad()
@@ -71,6 +79,8 @@ def cc_callback(self, d):
 
     if getattr(self.p, "is_hr_pass", False) and not self.vec_cc["doHR"]:
         return original_callback(self, d)
+
+    is_xl: bool = self.p.sd_model.is_sdxl
 
     mode = str(self.vec_cc["mode"])
     method = str(self.vec_cc["method"])
@@ -108,23 +118,42 @@ def cc_callback(self, d):
         self.vec_cc["b"],
     )
 
-    for i in range(batchSize):
-        # Brightness
-        source[i][0] += target[i][0] * bri
-        # Contrast
-        source[i][0] += NoiseMethods.get_delta(source[i][0]) * con
+    if not is_xl:
+        for i in range(batchSize):
+            # Brightness
+            source[i][0] += target[i][0] * bri
+            # Contrast
+            source[i][0] += NoiseMethods.get_delta(source[i][0]) * con
 
-        # R
-        source[i][2] -= target[i][2] * r
-        # G
-        source[i][1] += target[i][1] * g
-        # B
-        source[i][3] -= target[i][3] * b
+            # R
+            source[i][2] -= target[i][2] * r
+            # G
+            source[i][1] += target[i][1] * g
+            # B
+            source[i][3] -= target[i][3] * b
 
-        # Saturation
-        source[i][2] *= sat
-        source[i][1] *= sat
-        source[i][3] *= sat
+            # Saturation
+            source[i][2] *= sat
+            source[i][1] *= sat
+            source[i][3] *= sat
+
+    else:
+        # But why...
+        cb, cr = RGB_2_CbCr(r, b, g)
+
+        for i in range(batchSize):
+            # Brightness
+            source[i][0] += target[i][0] * bri
+            # Contrast
+            source[i][0] += NoiseMethods.get_delta(source[i][0]) * con
+
+            #CbCr
+            source[i][1] -= target[i][1] * cr
+            source[i][2] += target[i][2] * cb
+
+            # Saturation
+            source[i][1] *= sat
+            source[i][2] *= sat
 
     return original_callback(self, d)
 
