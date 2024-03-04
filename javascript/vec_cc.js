@@ -68,10 +68,12 @@ class VectorscopeCC {
             });
         });
 
-        wheel.addEventListener('mouseup', () => {
-            updateInput(sliders[0][1]);
-            updateInput(sliders[1][1]);
-            updateInput(sliders[2][1]);
+        ['mouseleave', 'mouseup'].forEach((event) => {
+            wheel.addEventListener(event, () => {
+                updateInput(sliders[0][0]);
+                updateInput(sliders[1][0]);
+                updateInput(sliders[2][0]);
+            });
         });
     }
 

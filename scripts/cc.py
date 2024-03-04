@@ -222,15 +222,12 @@ class VectorscopeCC(scripts.Script):
             p.extra_generation_params['Vec CC Scaling'] = scaling
             p.extra_generation_params['Vec CC Version'] = VERSION
 
-        # Decouple from Steps
-        scale:int = 16
-
-        bri /= scale
-        con /= scale
-        sat = pow(sat, 1.0 / scale)
-        r /= scale
-        g /= scale
-        b /= scale
+        bri /= steps
+        con /= steps
+        sat = pow(sat, 1.0 / steps)
+        r /= steps
+        g /= steps
+        b /= steps
 
         mode = 'x' if latent else 'denoised'
 

@@ -111,7 +111,7 @@ Therefore, I added a scaling option to modify the offset amount throughout the p
 - **Pos. Prompt:** `[high quality, best quality], 1girl, solo, casual, night, street, city, <lora:SDXL_Lightning_8steps:1>`
 - **Neg. Prompt:** `lowres, [low quality, worst quality], jpeg`
 - `Euler A SGMUniform`; `10 steps`; `2.0 CFG`; **Seed:** `2836968120`
-- `Straight Abs.` ; `Flat`
+- `Multi-Res Abs.` ; `Cos`
 
 <p align="center">
 <code>Disabled</code><br>
@@ -119,14 +119,14 @@ Therefore, I added a scaling option to modify the offset amount throughout the p
 </p>
 
 <p align="center">
-<code>Brightness: 2.5 ; Contrast: -0.5 ; Saturation: 1.5<br>
-R: 2.5; G: 2.5; B: -4</code><br>
+<code>Brightness: 2.0 ; Contrast: -0.5 ; Saturation: 1.5<br>
+R: 2.5; G: 1.5; B: -3</code><br>
 <img src="samples/01.jpg" width=768>
 </p>
 
 <p align="center">
-<code>Brightness: -2.5 ; Contrast: 0.5 ; Saturation: 1.5<br>
-R: -1; G: -1; B: 2.5</code><br>
+<code>Brightness: -2.5 ; Contrast: 1 ; Saturation: 0.75<br>
+R: -1.5; G: -1.5; B: 4</code><br>
 <img src="samples/02.jpg" width=768>
 </p>
 
