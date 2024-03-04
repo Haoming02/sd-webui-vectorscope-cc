@@ -1,20 +1,20 @@
 from modules.sd_samplers_kdiffusion import KDiffusionSampler
-from modules import shared
-
-import modules.scripts as scripts
-import gradio as gr
-import random
+from modules import shared, scripts
 
 from scripts.cc_colorpicker import create_colorpicker
 from scripts.cc_style import StyleManager
 from scripts.cc_xyz import xyz_support
 import scripts.cc_const as const
 
-style_manager = StyleManager()
-style_manager.load_styles()
+import gradio as gr
+import random
 
 
 VERSION = 'v2.0.0'
+
+
+style_manager = StyleManager()
+style_manager.load_styles()
 
 
 class VectorscopeCC(scripts.Script):
@@ -29,9 +29,10 @@ class VectorscopeCC(scripts.Script):
         return scripts.AlwaysVisible
 
     def ui(self, is_img2img):
+        mode = ("img" if is_img2img else "txt")
+        m = f"\"{mode}\""
 
-        with gr.Accordion(f"Vectorscope CC {VERSION}", elem_id=f"vec-cc-{'img' if is_img2img else 'txt'}", open=False):
-            m = ("\"img\"" if is_img2img else "\"txt\"")
+        with gr.Accordion(f"Vectorscope CC {VERSION}", elem_id=f"vec-cc-{mode}", open=False):
 
             with gr.Row():
                 enable = gr.Checkbox(label="Enable")
@@ -44,9 +45,9 @@ class VectorscopeCC(scripts.Script):
 
             with gr.Row():
                 with gr.Column():
-                    r = gr.Slider(label="R", info='Cyan | Red', minimum=const.COLOR.minimum, maximum=const.COLOR.maximum, step=0.05, value=const.COLOR.default, elem_id=f"cc-r-{'img' if is_img2img else 'txt'}")
-                    g = gr.Slider(label="G", info='Magenta | Green',minimum=const.COLOR.minimum, maximum=const.COLOR.maximum, step=0.05, value=const.COLOR.default, elem_id=f"cc-g-{'img' if is_img2img else 'txt'}")
-                    b = gr.Slider(label="B", info='Yellow | Blue',minimum=const.COLOR.minimum, maximum=const.COLOR.maximum, step=0.05, value=const.COLOR.default, elem_id=f"cc-b-{'img' if is_img2img else 'txt'}")
+                    r = gr.Slider(label="R", info='Cyan | Red', minimum=const.COLOR.minimum, maximum=const.COLOR.maximum, step=0.05, value=const.COLOR.default, elem_id=f"cc-r-{mode}")
+                    g = gr.Slider(label="G", info='Magenta | Green',minimum=const.COLOR.minimum, maximum=const.COLOR.maximum, step=0.05, value=const.COLOR.default, elem_id=f"cc-g-{mode}")
+                    b = gr.Slider(label="B", info='Yellow | Blue',minimum=const.COLOR.minimum, maximum=const.COLOR.maximum, step=0.05, value=const.COLOR.default, elem_id=f"cc-b-{mode}")
 
                 r.input(None, [r, g, b], None, _js=f'(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}')
                 g.input(None, [r, g, b], None, _js=f'(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}')
@@ -58,12 +59,12 @@ class VectorscopeCC(scripts.Script):
 
                 with gr.Row():
                     style_choice = gr.Dropdown(label="Styles", choices=style_manager.list_style(), scale = 3)
-                    apply_btn = gr.Button(value="Apply Style", elem_id=f"cc-apply-{'img' if is_img2img else 'txt'}", scale = 2)
+                    apply_btn = gr.Button(value="Apply Style", elem_id=f"cc-apply-{mode}", scale = 2)
                     refresh_btn = gr.Button(value="Refresh Style", scale = 2)
 
                 with gr.Row():
                     style_name = gr.Textbox(label="Style Name", scale = 3)
-                    save_btn = gr.Button(value="Save Style", elem_id=f"cc-save-{'img' if is_img2img else 'txt'}", scale = 2)
+                    save_btn = gr.Button(value="Save Style", elem_id=f"cc-save-{mode}", scale = 2)
                     delete_btn = gr.Button(value="Delete Style", scale = 2)
 
                 apply_btn.click(fn=style_manager.get_style, inputs=style_choice, outputs=[latent, bri, con, sat, r, g, b]).then(None, [r, g, b], None, _js=f'(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}')
@@ -222,7 +223,7 @@ class VectorscopeCC(scripts.Script):
             p.extra_generation_params['Vec CC Version'] = VERSION
 
         # Decouple from Steps
-        scale:int = 10
+        scale:int = 16
 
         bri /= scale
         con /= scale

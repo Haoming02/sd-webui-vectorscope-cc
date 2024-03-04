@@ -5,8 +5,8 @@
 - Revert Sampler **Hook** *(`internal`)*
 
 ### v2.0.alpha - 2024 Feb.29
-- Removed **LFS** *(`GitHub`)*
 - Changed Sampler **Hook** *(`internal`)*
+- Removed **LFS** *(`GitHub`)*
 
 ### v1.5.1 - 2023 Dec.03
 - Bug Fix by. **catboxanon**

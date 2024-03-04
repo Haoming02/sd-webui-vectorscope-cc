@@ -25,11 +25,11 @@
     }
 
     #vec-cc-txt fieldset > div {
-        gap: 0.5em;
+        gap: 0.2em 0.4em;
     }
 
     #vec-cc-img fieldset > div {
-        gap: 0.5em;
+        gap: 0.2em 0.4em;
     }
 
 #vec-hdr-txt label, #vec-hdr-img label {
