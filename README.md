@@ -2,6 +2,8 @@
 This is an Extension for the [Automatic1111 Webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui), which performs a kind of **Offset Noise**[*](#offset-noise-tldr) natively,
 allowing you to adjust the brightness, contrast, and color of the generations.
 
+> Also compatible with [Forge](https://github.com/lllyasviel/stable-diffusion-webui-forge) !
+
 **Important:** The color currently only works for **SD 1.5** Checkpoints
 
 > [Sample Images](#sample-images)

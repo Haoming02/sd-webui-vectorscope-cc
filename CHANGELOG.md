@@ -1,8 +1,12 @@
-### v2.0.1 - 2024 Feb.29
-- Revert **Hook** change
+### v2.0.0 - 2024 Mar.01
+- Major **Rewrite** & **Optimization**
 
-### v2.0.0 - 2024 Feb.29
-- Removed **LFS**
+### v2.0.beta - 2024 Feb.29
+- Revert Sampler **Hook** *(`internal`)*
+
+### v2.0.alpha - 2024 Feb.29
+- Removed **LFS** *(`GitHub`)*
+- Changed Sampler **Hook** *(`internal`)*
 
 ### v1.5.1 - 2023 Dec.03
 - Bug Fix by. **catboxanon**

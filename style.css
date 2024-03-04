@@ -1,37 +1,37 @@
-#cc-dot-txt {
+#cc-dot-txt, #cc-dot-img {
     position: absolute;
     width: 24px;
     height: 24px;
     pointer-events: none;
 }
 
-#cc-dot-img {
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    pointer-events: none;
-}
-
-#cc-img-txt {
+#cc-img-txt, #cc-img-img {
     cursor: pointer;
+    height: 100%;
+    width: auto;
+    margin: auto;
 }
 
-#cc-img-img {
-    cursor: pointer;
+#vec-cc-txt, #vec-cc-img {
+    user-select: none;
 }
 
-#vec-cc-txt button {
-    border-radius: 0.5em;
-}
+    #vec-cc-txt button, #vec-cc-txt label {
+        border-radius: 0.5em;
+    }
 
-#vec-cc-txt label {
-    border-radius: 0.5em;
-}
+    #vec-cc-img button, #vec-cc-img label {
+        border-radius: 0.5em;
+    }
 
-#vec-cc-img button {
-    border-radius: 0.5em;
-}
+    #vec-cc-txt fieldset > div {
+        gap: 0.5em;
+    }
 
-#vec-cc-img label {
+    #vec-cc-img fieldset > div {
+        gap: 0.5em;
+    }
+
+#vec-hdr-txt label, #vec-hdr-img label {
     border-radius: 0.5em;
 }
