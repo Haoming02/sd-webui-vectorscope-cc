@@ -84,7 +84,6 @@ class VectorscopeCC(scripts.Script):
                 def on_reset():
                     return [
                         gr.update(value=False),
-                        gr.update(value=False),
                         gr.update(value=const.Brightness.default),
                         gr.update(value=const.Contrast.default),
                         gr.update(value=const.Saturation.default),
@@ -106,7 +105,7 @@ class VectorscopeCC(scripts.Script):
                         gr.update(value=round(random.uniform(const.COLOR.minimum, const.COLOR.maximum), 2))
                     ]
 
-                reset_btn.click(fn=on_reset, inputs=[], outputs=[enable, latent, bri, con, sat, r, g, b, doHR, method, scaling]).then(None, [r, g, b], None, _js=f'(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}')
+                reset_btn.click(fn=on_reset, inputs=[], outputs=[latent, bri, con, sat, r, g, b, doHR, method, scaling]).then(None, [r, g, b], None, _js=f'(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}')
                 random_btn.click(fn=on_random, inputs=[], outputs=[bri, con, sat, r, g, b]).then(None, [r, g, b], None, _js=f'(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}')
 
         self.paste_field_names = []
@@ -208,7 +207,7 @@ class VectorscopeCC(scripts.Script):
             print(f'G:\t\t{g}')
             print(f'B:\t\t{b}\n')
 
-        if getattr(shared.opts, 'cc_metadata', False):
+        if getattr(shared.opts, 'cc_metadata', True):
             p.extra_generation_params['Vec CC Enabled'] = enable
             p.extra_generation_params['Vec CC Alt'] = latent
             p.extra_generation_params['Vec CC Brightness'] = bri

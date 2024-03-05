@@ -1,7 +1,10 @@
-### v2.0.0 - 2024 Mar.04
+### v2.0.0 - 2024 Mar.05
 - Improved Logics
 
-### v2.0.zeta - 2024 Mar.04
+### v2.0.epsilon - 2024 Mar.04
+- Improved Logics
+
+### v2.0.delta - 2024 Mar.04
 - Support **SDXL**
 
 ### v2.0.gamma - 2024 Mar.01
