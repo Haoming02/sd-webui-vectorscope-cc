@@ -1,3 +1,22 @@
+### v2.0.0 - 2024 Mar.05
+- Improved Logics
+
+### v2.0.epsilon - 2024 Mar.04
+- Improved Logics
+
+### v2.0.delta - 2024 Mar.04
+- Support **SDXL**
+
+### v2.0.gamma - 2024 Mar.01
+- Major **Rewrite** & **Optimization**
+
+### v2.0.beta - 2024 Feb.29
+- Revert Sampler **Hook** *(`internal`)*
+
+### v2.0.alpha - 2024 Feb.29
+- Changed Sampler **Hook** *(`internal`)*
+- Removed **LFS** *(`GitHub`)*
+
 ### v1.5.1 - 2023 Dec.03
 - Bug Fix by. **catboxanon**
 
