@@ -10,7 +10,7 @@ import gradio as gr
 import random
 
 
-VERSION = 'v2.0.0'
+VERSION = 'v2.0.1'
 
 
 style_manager = StyleManager()
@@ -73,7 +73,9 @@ class VectorscopeCC(scripts.Script):
                 refresh_btn.click(fn=lambda _: gr.update(choices=style_manager.list_style()), outputs=style_choice)
 
             with gr.Accordion("Advanced Settings", open=False):
-                doHR = gr.Checkbox(label="Process Hires. fix")
+                with gr.Row():
+                    doHR = gr.Checkbox(label="Process Hires. fix")
+                    doAD = gr.Checkbox(label="Process Adetailer")
                 method = gr.Radio(["Straight", "Straight Abs.", "Cross", "Cross Abs.", "Ones", "N.Random", "U.Random", "Multi-Res", "Multi-Res Abs."], label="Noise Settings", value="Straight Abs.")
                 scaling = gr.Radio(["Flat", "Cos", "Sin", "1 - Cos", "1 - Sin"], label="Scaling Settings", value="Flat")
 
@@ -91,6 +93,7 @@ class VectorscopeCC(scripts.Script):
                         gr.update(value=const.COLOR.default),
                         gr.update(value=const.COLOR.default),
                         gr.update(value=False),
+                        gr.update(value=False),
                         gr.update(value='Straight Abs.'),
                         gr.update(value='Flat')
                     ]
@@ -105,7 +108,7 @@ class VectorscopeCC(scripts.Script):
                         gr.update(value=round(random.uniform(const.COLOR.minimum, const.COLOR.maximum), 2))
                     ]
 
-                reset_btn.click(fn=on_reset, inputs=[], outputs=[latent, bri, con, sat, r, g, b, doHR, method, scaling]).then(None, [r, g, b], None, _js=f'(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}')
+                reset_btn.click(fn=on_reset, inputs=[], outputs=[latent, bri, con, sat, r, g, b, doHR, doAD, method, scaling]).then(None, [r, g, b], None, _js=f'(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}')
                 random_btn.click(fn=on_random, inputs=[], outputs=[bri, con, sat, r, g, b]).then(None, [r, g, b], None, _js=f'(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}')
 
         self.paste_field_names = []
@@ -120,6 +123,7 @@ class VectorscopeCC(scripts.Script):
             (b, "Vec CC B"),
             (method, "Vec CC Noise"),
             (doHR, "Vec CC Proc HrF"),
+            (doAD, "Vec CC Proc Ade"),
             (scaling, "Vec CC Scaling"),
         ]
 
@@ -127,9 +131,9 @@ class VectorscopeCC(scripts.Script):
             comp.do_not_save_to_config = True
             self.paste_field_names.append(name)
 
-        return [enable, latent, bri, con, sat, r, g, b, doHR, method, scaling]
+        return [enable, latent, bri, con, sat, r, g, b, doHR, doAD, method, scaling]
 
-    def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, r:float, g:float, b:float, doHR:bool, method:str, scaling:str):
+    def process(self, p, enable:bool, latent:bool, bri:float, con:float, sat:float, r:float, g:float, b:float, doHR:bool, doAD:bool, method:str, scaling:str):
         if 'Enable' in self.xyzCache.keys():
             enable = (self.xyzCache['Enable'].lower().strip() == "true")
 
@@ -218,6 +222,7 @@ class VectorscopeCC(scripts.Script):
             p.extra_generation_params['Vec CC B'] = b
             p.extra_generation_params['Vec CC Noise'] = method
             p.extra_generation_params['Vec CC Proc HrF'] = doHR
+            p.extra_generation_params['Vec CC Proc Ade'] = doAD
             p.extra_generation_params['Vec CC Scaling'] = scaling
             p.extra_generation_params['Vec CC Version'] = VERSION
 
@@ -241,6 +246,7 @@ class VectorscopeCC(scripts.Script):
             'b': b,
             'method': method,
             'doHR': doHR,
+            'doAD': doAD,
             'scaling': scaling,
             'step': steps
         }
