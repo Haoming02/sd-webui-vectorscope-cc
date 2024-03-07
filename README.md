@@ -65,7 +65,9 @@ Refer to the parameters and sample images below and play around with the values.
 
 #### Advanced Settings
 - **Process Hires. fix:** By default, this Extension only functions during the **txt2img** phase, so that **Hires. fix** may "fix" the artifacts introduced during **txt2img**. Enable this to process **Hires. fix** phase too.
-  - This option does not affect **img2img**
+    - This option does not affect **img2img**
+- **Process ADetailer:** Enable to process **[ADetailer](https://github.com/Bing-su/adetailer)** phase too.
+    - Will usually cause a square of inconsistent colors
 
 #### Noise Settings
 > let `x` denote the Tensor ; let `y` denote the operations

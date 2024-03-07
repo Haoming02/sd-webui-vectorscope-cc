@@ -80,6 +80,9 @@ def cc_callback(self, d):
     if getattr(self.p, "is_hr_pass", False) and not self.vec_cc["doHR"]:
         return original_callback(self, d)
 
+    if getattr(self.p, "_ad_inner", False) and not self.vec_cc["doAD"]:
+        return original_callback(self, d)
+
     is_xl: bool = self.p.sd_model.is_sdxl
 
     mode = str(self.vec_cc["mode"])

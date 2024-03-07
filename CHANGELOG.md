@@ -1,3 +1,6 @@
+### v2.0.1 - 2024 Mar.07
+- Support **ADetailer**
+
 ### v2.0.0 - 2024 Mar.05
 - Improved Logics
 
