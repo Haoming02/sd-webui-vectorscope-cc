@@ -9,7 +9,7 @@ allowing you to adjust the brightness, contrast, and color of the generations.
 > [Sample Images](#sample-images)
 
 ## How to Use
-After installing this Extension, you will see a new section in both **txt2img** and **img2img** tabs. 
+After installing this Extension, you will see a new section in both **txt2img** and **img2img** tabs.
 Refer to the parameters and sample images below and play around with the values.
 
 **Note:** Since this modifies the underlying latent noise, the composition may change drastically.
@@ -76,9 +76,9 @@ Refer to the parameters and sample images below and play around with the values.
   - `x += x * y`
 - **Cross:** All operations are calculated on the Tensor opposite of the `Alt.` setting
   - `x += x' * y`
-- **Ones:** All operations are calculated on a Tensor filled with ones 
-  - `x += 1 * y` 
-- **N.Random:** All operations are calculated on a Tensor filled with random values from normal distribution 
+- **Ones:** All operations are calculated on a Tensor filled with ones
+  - `x += 1 * y`
+- **N.Random:** All operations are calculated on a Tensor filled with random values from normal distribution
   - `x += randn() * y`
 - **U.Random:** All operations are calculated on a Tensor filled with random values from uniform distribution
   - `x += rand() * y`
@@ -159,7 +159,7 @@ R: -1.5; G: -1.5; B: 4</code><br>
 The value is used as the random seed<br>You can refer to the console to see the randomized values</p>
 
 ## API
-You can use this Extension via [API](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API) by adding an entry to the `alwayson_scripts` of your payload. 
+You can use this Extension via [API](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API) by adding an entry to the `alwayson_scripts` of your payload.
 An [example](samples/api_example.json) is provided.
 The `args` are sent in the following order in an `array`:
 
@@ -176,7 +176,7 @@ The `args` are sent in the following order in an `array`:
 - **Scaling Settings:** `str`
 
 ## Known Issues
-- Does **not** work with `DDIM`, `UniPC`, `Euler` samplers
+- Does **not** work certain samplers *(See [Wiki](https://github.com/Haoming02/sd-webui-vectorscope-cc/wiki/Vectorscope-CC-Wiki#effects-with-different-samplers))*
 - Has little effect when used with certain **LoRA**s
 
 ## HDR
@@ -200,22 +200,22 @@ The `args` are sent in the following order in an `array`:
 <details>
 <summary>Offset Noise TL;DR</summary>
 
-The most common *version* of **Offset Noise** you may have heard of is from this [blog post](https://www.crosslabs.org/blog/diffusion-with-offset-noise), 
+The most common *version* of **Offset Noise** you may have heard of is from this [blog post](https://www.crosslabs.org/blog/diffusion-with-offset-noise),
 where it was discovered that the noise functions used during **training** were flawed, causing `Stable Diffusion` to always generate images with an average of `0.5` *(**ie.** grey)*.
 
 > **ie.** Even if you prompt for dark/night or bright/snow, the overall image still looks "grey"
 
 > [Technical Explanations](https://youtu.be/cVxQmbf3q7Q)
 
-However, this Extension instead tries to offset the latent noise during the **inference** phase. 
+However, this Extension instead tries to offset the latent noise during the **inference** phase.
 Therefore, you do not need to use models that were specially trained, as this can work on any model.
 </details>
 
 <details>
 <summary>How does this work?</summary>
 
-After reading through and messing around with the code, 
-I found out that it is possible to directly modify the Tensors 
+After reading through and messing around with the code,
+I found out that it is possible to directly modify the Tensors
 representing the latent noise used by the Stable Diffusion process.
 
 The dimensions of the Tensors is `(X, 4, H / 8, W / 8)`, which can be thought of like this:
@@ -225,7 +225,7 @@ The dimensions of the Tensors is `(X, 4, H / 8, W / 8)`, which can be thought of
 > **eg.** Generating a single 512x768 image will create a Tensor of size (1, 4, 96, 64)
 
 Then, I tried to play around with the values of each channel and ended up discovering these relationships.
-Essentially, the 4 channels correspond to the **CMYK** color format, 
+Essentially, the 4 channels correspond to the **CMYK** color format,
 hence why you can control the brightness as well as the colors.
 
 </details>
