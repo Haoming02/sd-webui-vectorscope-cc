@@ -3,7 +3,7 @@ import modules.scripts as scripts
 
 def grid_reference():
     for data in scripts.scripts_data:
-        if data.script_class.__module__ == "xyz_grid.py" and hasattr(data, "module"):
+        if data.script_class.__module__ in ('scripts.xyz_grid', 'xyz_grid.py') and hasattr(data, "module"):
             return data.module
 
     raise SystemError("Could not find X/Y/Z Plot...")
