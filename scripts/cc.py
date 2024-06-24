@@ -113,7 +113,7 @@ class VectorscopeCC(scripts.Script):
 
         self.paste_field_names = []
         self.infotext_fields = [
-            (enable, lambda d: enable.update(value=("Vec CC Enabled" in d))),
+            (enable, "Vec CC Enabled"),
             (latent, "Vec CC Alt"),
             (bri, "Vec CC Brightness"),
             (con, "Vec CC Contrast"),
