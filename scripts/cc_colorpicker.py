@@ -7,17 +7,18 @@ DOT = os.path.join(scripts.basedir(), "scripts", "dot.png")
 
 
 def create_colorpicker(is_img: bool):
+    m = "img" if is_img else "txt"
 
     gr.Image(
         WHEEL,
         interactive=False,
         container=False,
-        elem_id=f"cc-colorwheel-{'img' if is_img else 'txt'}",
+        elem_id=f"cc-colorwheel-{m}",
     )
 
     gr.Image(
         DOT,
         interactive=False,
         container=False,
-        elem_id=f"cc-temp-{'img' if is_img else 'txt'}",
+        elem_id=f"cc-temp-{m}",
     )

@@ -1,5 +1,6 @@
 from math import cos, sin, pi
 
+
 def apply_scaling(
     alg: str,
     current_step: int,
@@ -25,8 +26,8 @@ def apply_scaling(
             case "Sin":
                 mod = sin(rad)
             case "1 - Cos":
-                mod = (1 - cos(rad))
+                mod = 1 - cos(rad)
             case "1 - Sin":
-                mod = (1 - sin(rad))
+                mod = 1 - sin(rad)
 
     return [bri * mod, con * mod, (sat - 1.0) * mod + 1.0, r * mod, g * mod, b * mod]

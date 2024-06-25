@@ -51,9 +51,15 @@ class VectorHDR(scripts.Script):
     def ui(self, is_img2img):
         with gr.Row():
             count = gr.Slider(label="Brackets", minimum=3, maximum=9, step=2, value=7)
-            gap = gr.Slider(label="Gaps", minimum=0.50, maximum=2.50, step=0.25, value=1.50)
+            gap = gr.Slider(
+                label="Gaps", minimum=0.50, maximum=2.50, step=0.25, value=1.50
+            )
 
-        with gr.Accordion("Merge Options", elem_id="vec-hdr-" + ("img" if is_img2img else "txt"), open=False):
+        with gr.Accordion(
+            "Merge Options",
+            elem_id="vec-hdr-" + ("img" if is_img2img else "txt"),
+            open=False,
+        ):
             auto = gr.Checkbox(label="Automatically Merge", value=True)
 
             with gr.Row():
@@ -74,7 +80,9 @@ class VectorHDR(scripts.Script):
 
         return [count, gap, auto, depth, fmt, gamma]
 
-    def run(self, p, count: int, gap: float, auto: bool, depth: str, fmt: str, gamma: float):
+    def run(
+        self, p, count: int, gap: float, auto: bool, depth: str, fmt: str, gamma: float
+    ):
         center = count // 2
 
         p.seed = get_fixed_seed(p.seed)

@@ -54,7 +54,9 @@ class NoiseMethods:
                 wn = max(1, int(w / (r**i)))
                 hn = max(1, int(h / (r**i)))
 
-                noise[b] += (upsampler(torch.randn(1, c, hn, wn).to(device)) * discount**i)[0]
+                noise[b] += (
+                    upsampler(torch.randn(1, c, hn, wn).to(device)) * discount**i
+                )[0]
 
                 if wn == 1 or hn == 1:
                     break
@@ -62,7 +64,7 @@ class NoiseMethods:
         return noise / noise.std()
 
 
-def RGB_2_CbCr(r:float, g:float, b:float) -> float:
+def RGB_2_CbCr(r: float, g: float, b: float) -> float:
     """Convert RGB channels into YCbCr for SDXL"""
     cb = -0.15 * r - 0.29 * g + 0.44 * b
     cr = 0.44 * r - 0.37 * g - 0.07 * b
@@ -71,6 +73,7 @@ def RGB_2_CbCr(r:float, g:float, b:float) -> float:
 
 
 original_callback = KDiffusionSampler.callback_state
+
 
 @torch.no_grad()
 def cc_callback(self, d):
@@ -150,7 +153,7 @@ def cc_callback(self, d):
             # Contrast
             source[i][0] += NoiseMethods.get_delta(source[i][0]) * con
 
-            #CbCr
+            # CbCr
             source[i][1] -= target[i][1] * cr
             source[i][2] += target[i][2] * cb
 
@@ -160,10 +163,12 @@ def cc_callback(self, d):
 
     return original_callback(self, d)
 
+
 KDiffusionSampler.callback_state = cc_callback
 
 
 def restore_callback():
     KDiffusionSampler.callback_state = original_callback
+
 
 script_callbacks.on_script_unloaded(restore_callback)

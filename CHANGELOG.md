@@ -1,3 +1,9 @@
+### v2.0.3 - 2024 Jun.25
+- Format
+
+### v2.0.2 - 2024 Jun.24
+- Bug Fix
+
 ### v2.0.1 - 2024 Mar.07
 - Support **ADetailer**
 
@@ -30,7 +36,7 @@
 - Better **Hires. fix** logic
 
 ### v1.4.9 - 2023 Nov.01
-- Improve Sliders values refresh 
+- Improve Sliders values refresh
 
 ### v1.4.8 - 2023 Nov.01
 - Removed "**magic numbers**"

@@ -58,7 +58,9 @@ class StyleManager:
 
     def save_style(self, style_name, latent, bri, con, sat, r, g, b):
         if style_name in self.STYLE_SHEET["styles"].keys():
-            print(f'\n[Warning] Duplicated Style Name "{style_name}" Detected! Values were not saved!\n')
+            print(
+                f'\n[Warning] Duplicated Style Name "{style_name}" Detected! Values were not saved!\n'
+            )
             return self.list_style()
 
         style = {

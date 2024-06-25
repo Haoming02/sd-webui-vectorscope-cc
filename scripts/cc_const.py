@@ -4,6 +4,7 @@ class Param:
         self.maximum = maximum
         self.default = default
 
+
 Brightness = Param(-5.0, 5.0, 0.0)
 Contrast = Param(-5.0, 5.0, 0.0)
 Saturation = Param(0.25, 1.75, 1.0)
