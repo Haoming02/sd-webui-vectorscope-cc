@@ -38,7 +38,7 @@ class NoiseMethods:
     ):
         """
         Credit: Kohya_SS
-        https://github.com/kohya-ss/sd-scripts/blob/main/library/custom_train_functions.py#L448
+        https://github.com/kohya-ss/sd-scripts/blob/main/library/custom_train_functions.py#L453
         """
 
         noise = NoiseMethods.zeros(latent) if use_zero else NoiseMethods.ones(latent)

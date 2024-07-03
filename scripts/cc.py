@@ -10,7 +10,7 @@ import gradio as gr
 import random
 
 
-VERSION = "v2.0.3"
+VERSION = "v2.1.0"
 
 
 style_manager = StyleManager()
@@ -161,6 +161,10 @@ class VectorscopeCC(scripts.Script):
                 with gr.Row():
                     doHR = gr.Checkbox(label="Process Hires. fix")
                     doAD = gr.Checkbox(label="Process Adetailer")
+
+                    doRN = gr.Checkbox(label="Randomize using Seed")
+                    doRN.do_not_save_to_config = True
+
                 method = gr.Radio(
                     [
                         "Straight",
@@ -195,6 +199,7 @@ class VectorscopeCC(scripts.Script):
                         gr.update(value=const.COLOR.default),
                         gr.update(value=const.COLOR.default),
                         gr.update(value=const.COLOR.default),
+                        gr.update(value=False),
                         gr.update(value=False),
                         gr.update(value=False),
                         gr.update(value="Straight Abs."),
@@ -266,6 +271,7 @@ class VectorscopeCC(scripts.Script):
                         b,
                         doHR,
                         doAD,
+                        doRN,
                         method,
                         scaling,
                     ],
@@ -304,9 +310,23 @@ class VectorscopeCC(scripts.Script):
             comp.do_not_save_to_config = True
             self.paste_field_names.append(name)
 
-        return [enable, latent, bri, con, sat, r, g, b, doHR, doAD, method, scaling]
+        return [
+            enable,
+            latent,
+            bri,
+            con,
+            sat,
+            r,
+            g,
+            b,
+            doHR,
+            doAD,
+            doRN,
+            method,
+            scaling,
+        ]
 
-    def process(
+    def process_batch(
         self,
         p,
         enable: bool,
@@ -319,8 +339,13 @@ class VectorscopeCC(scripts.Script):
         b: float,
         doHR: bool,
         doAD: bool,
+        doRN: bool,
         method: str,
         scaling: str,
+        batch_number: int,
+        prompts: list[str],
+        seeds: list[int],
+        subseeds: list[int],
     ):
         if "Enable" in self.xyzCache.keys():
             enable = self.xyzCache["Enable"].lower().strip() == "true"
@@ -343,7 +368,7 @@ class VectorscopeCC(scripts.Script):
             else:
                 print("\n[X/Y/Z Plot] x [Vec.CC] Randomize is Enabled.\n")
 
-        cc_seed = None
+        cc_seed = int(seeds[0]) if doRN else None
 
         for k, v in self.xyzCache.items():
             match k:

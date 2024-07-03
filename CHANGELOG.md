@@ -1,3 +1,6 @@
+### v2.1.0 - 2024 Jul.03
+- Support **Randomize** Forever
+
 ### v2.0.3 - 2024 Jun.25
 - Format
 
