@@ -6,11 +6,11 @@ from scripts.cc_style import StyleManager
 from scripts.cc_xyz import xyz_support
 import scripts.cc_const as const
 
+from random import seed
 import gradio as gr
-import random
 
 
-VERSION = "v2.1.0"
+VERSION = "v2.2.0"
 
 
 style_manager = StyleManager()
@@ -68,47 +68,44 @@ class VectorscopeCC(scripts.Script):
                     r = gr.Slider(
                         label="R",
                         info="Cyan | Red",
-                        minimum=const.COLOR.minimum,
-                        maximum=const.COLOR.maximum,
+                        minimum=const.Color.minimum,
+                        maximum=const.Color.maximum,
                         step=0.05,
-                        value=const.COLOR.default,
+                        value=const.Color.default,
                         elem_id=f"cc-r-{mode}",
                     )
                     g = gr.Slider(
                         label="G",
                         info="Magenta | Green",
-                        minimum=const.COLOR.minimum,
-                        maximum=const.COLOR.maximum,
+                        minimum=const.Color.minimum,
+                        maximum=const.Color.maximum,
                         step=0.05,
-                        value=const.COLOR.default,
+                        value=const.Color.default,
                         elem_id=f"cc-g-{mode}",
                     )
                     b = gr.Slider(
                         label="B",
                         info="Yellow | Blue",
-                        minimum=const.COLOR.minimum,
-                        maximum=const.COLOR.maximum,
+                        minimum=const.Color.minimum,
+                        maximum=const.Color.maximum,
                         step=0.05,
-                        value=const.COLOR.default,
+                        value=const.Color.default,
                         elem_id=f"cc-b-{mode}",
                     )
 
                 r.input(
                     None,
-                    [r, g, b],
-                    None,
+                    inputs=[r, g, b],
                     _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
                 )
                 g.input(
                     None,
-                    [r, g, b],
-                    None,
+                    inputs=[r, g, b],
                     _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
                 )
                 b.input(
                     None,
-                    [r, g, b],
-                    None,
+                    inputs=[r, g, b],
                     _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
                 )
 
@@ -131,31 +128,6 @@ class VectorscopeCC(scripts.Script):
                         value="Save Style", elem_id=f"cc-save-{mode}", scale=2
                     )
                     delete_btn = gr.Button(value="Delete Style", scale=2)
-
-                apply_btn.click(
-                    fn=style_manager.get_style,
-                    inputs=style_choice,
-                    outputs=[latent, bri, con, sat, r, g, b],
-                ).then(
-                    None,
-                    [r, g, b],
-                    None,
-                    _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
-                )
-                save_btn.click(
-                    fn=lambda *args: gr.update(choices=style_manager.save_style(*args)),
-                    inputs=[style_name, latent, bri, con, sat, r, g, b],
-                    outputs=style_choice,
-                )
-                delete_btn.click(
-                    fn=lambda name: gr.update(choices=style_manager.delete_style(name)),
-                    inputs=style_name,
-                    outputs=style_choice,
-                )
-                refresh_btn.click(
-                    fn=lambda _: gr.update(choices=style_manager.list_style()),
-                    outputs=style_choice,
-                )
 
             with gr.Accordion("Advanced Settings", open=False):
                 with gr.Row():
@@ -186,6 +158,48 @@ class VectorscopeCC(scripts.Script):
                     value="Flat",
                 )
 
+            comps = (
+                latent,
+                bri,
+                con,
+                sat,
+                r,
+                g,
+                b,
+                doHR,
+                doAD,
+                doRN,
+                method,
+                scaling,
+            )
+
+            apply_btn.click(
+                fn=style_manager.get_style,
+                inputs=style_choice,
+                outputs=[*comps],
+            ).then(
+                None,
+                inputs=[r, g, b],
+                _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
+            )
+
+            save_btn.click(
+                fn=lambda *args: gr.update(choices=style_manager.save_style(*args)),
+                inputs=[style_name, *comps],
+                outputs=style_choice,
+            )
+
+            delete_btn.click(
+                fn=lambda name: gr.update(choices=style_manager.delete_style(name)),
+                inputs=style_name,
+                outputs=style_choice,
+            )
+
+            refresh_btn.click(
+                fn=lambda _: gr.update(choices=style_manager.load_styles()),
+                outputs=style_choice,
+            )
+
             with gr.Row():
                 reset_btn = gr.Button(value="Reset")
                 random_btn = gr.Button(value="Randomize")
@@ -196,9 +210,9 @@ class VectorscopeCC(scripts.Script):
                         gr.update(value=const.Brightness.default),
                         gr.update(value=const.Contrast.default),
                         gr.update(value=const.Saturation.default),
-                        gr.update(value=const.COLOR.default),
-                        gr.update(value=const.COLOR.default),
-                        gr.update(value=const.COLOR.default),
+                        gr.update(value=const.Color.default),
+                        gr.update(value=const.Color.default),
+                        gr.update(value=const.Color.default),
                         gr.update(value=False),
                         gr.update(value=False),
                         gr.update(value=False),
@@ -208,85 +222,25 @@ class VectorscopeCC(scripts.Script):
 
                 def on_random():
                     return [
-                        gr.update(
-                            value=round(
-                                random.uniform(
-                                    const.Brightness.minimum, const.Brightness.maximum
-                                ),
-                                2,
-                            )
-                        ),
-                        gr.update(
-                            value=round(
-                                random.uniform(
-                                    const.Contrast.minimum, const.Contrast.maximum
-                                ),
-                                2,
-                            )
-                        ),
-                        gr.update(
-                            value=round(
-                                random.uniform(
-                                    const.Saturation.minimum, const.Saturation.maximum
-                                ),
-                                2,
-                            )
-                        ),
-                        gr.update(
-                            value=round(
-                                random.uniform(
-                                    const.COLOR.minimum, const.COLOR.maximum
-                                ),
-                                2,
-                            )
-                        ),
-                        gr.update(
-                            value=round(
-                                random.uniform(
-                                    const.COLOR.minimum, const.COLOR.maximum
-                                ),
-                                2,
-                            )
-                        ),
-                        gr.update(
-                            value=round(
-                                random.uniform(
-                                    const.COLOR.minimum, const.COLOR.maximum
-                                ),
-                                2,
-                            )
-                        ),
+                        gr.update(value=const.Brightness.rand()),
+                        gr.update(value=const.Contrast.rand()),
+                        gr.update(value=const.Saturation.rand()),
+                        gr.update(value=const.Color.rand()),
+                        gr.update(value=const.Color.rand()),
+                        gr.update(value=const.Color.rand()),
                     ]
 
                 reset_btn.click(
                     fn=on_reset,
-                    inputs=[],
-                    outputs=[
-                        latent,
-                        bri,
-                        con,
-                        sat,
-                        r,
-                        g,
-                        b,
-                        doHR,
-                        doAD,
-                        doRN,
-                        method,
-                        scaling,
-                    ],
+                    outputs=[*comps],
                 ).then(
                     None,
-                    [r, g, b],
-                    None,
+                    inputs=[r, g, b],
                     _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
                 )
-                random_btn.click(
-                    fn=on_random, inputs=[], outputs=[bri, con, sat, r, g, b]
-                ).then(
+                random_btn.click(fn=on_random, outputs=[bri, con, sat, r, g, b]).then(
                     None,
-                    [r, g, b],
-                    None,
+                    inputs=[r, g, b],
                     _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
                 )
 
@@ -310,21 +264,7 @@ class VectorscopeCC(scripts.Script):
             comp.do_not_save_to_config = True
             self.paste_field_names.append(name)
 
-        return [
-            enable,
-            latent,
-            bri,
-            con,
-            sat,
-            r,
-            g,
-            b,
-            doHR,
-            doAD,
-            doRN,
-            method,
-            scaling,
-        ]
+        return [enable, *comps]
 
     def process_batch(
         self,
@@ -408,21 +348,15 @@ class VectorscopeCC(scripts.Script):
                 steps = int(steps * getattr(p, "denoising_strength", 1.0) + 1.0)
 
         if cc_seed:
-            random.seed(cc_seed)
+            seed(cc_seed)
 
-            bri = round(
-                random.uniform(const.Brightness.minimum, const.Brightness.maximum), 2
-            )
-            con = round(
-                random.uniform(const.Contrast.minimum, const.Contrast.maximum), 2
-            )
-            sat = round(
-                random.uniform(const.Saturation.minimum, const.Saturation.maximum), 2
-            )
+            bri = const.Brightness.rand()
+            con = const.Contrast.rand()
+            sat = const.Saturation.rand()
 
-            r = round(random.uniform(const.COLOR.minimum, const.COLOR.maximum), 2)
-            g = round(random.uniform(const.COLOR.minimum, const.COLOR.maximum), 2)
-            b = round(random.uniform(const.COLOR.minimum, const.COLOR.maximum), 2)
+            r = const.Color.rand()
+            g = const.Color.rand()
+            b = const.Color.rand()
 
             print(f"\n-> Seed: {cc_seed}")
             print(f"Brightness:\t{bri}")

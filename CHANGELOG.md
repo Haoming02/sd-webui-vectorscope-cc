@@ -1,3 +1,7 @@
+### v2.2.0 - 2024 Jul.03
+- Add `Adv.` in **Styles Presets**
+- Improve **Consts** Logics *(`internal`)*
+
 ### v2.1.0 - 2024 Jul.03
 - Support **Randomize** Forever
 

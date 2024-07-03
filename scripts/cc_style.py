@@ -1,5 +1,5 @@
 import modules.scripts as scripts
-import scripts.cc_const as const
+import gradio as gr
 import json
 import os
 
@@ -14,83 +14,95 @@ class StyleManager:
         self.STYLE_SHEET = None
 
     def load_styles(self):
-        if self.STYLE_SHEET is not None:
-            return
-
-        try:
+        if os.path.isfile(STYLE_FILE):
             with open(STYLE_FILE, "r", encoding="utf-8") as json_file:
-                self.STYLE_SHEET = json.loads(json_file.read())
+                self.STYLE_SHEET = json.load(json_file)
                 print("[Vec. CC] Style Sheet Loaded...")
 
-        except IOError:
+        else:
             with open(STYLE_FILE, "w+", encoding="utf-8") as json_file:
                 self.STYLE_SHEET = EMPTY_STYLE
-                json_file.write(json.dumps(self.STYLE_SHEET))
+                json.dump(self.STYLE_SHEET, json_file)
                 print("[Vec. CC] Creating Empty Style Sheet...")
+
+        return self.list_style()
 
     def list_style(self):
         return list(self.STYLE_SHEET["styles"].keys())
 
-    def get_style(self, style_name):
-        try:
-            style = self.STYLE_SHEET["styles"][style_name]
-            return (
-                style["alt"],
-                style["brightness"],
-                style["contrast"],
-                style["saturation"],
-                style["rgb"][0],
-                style["rgb"][1],
-                style["rgb"][2],
-            )
+    def get_style(self, style_name: str):
+        style: dict = self.STYLE_SHEET["styles"].get(style_name, None)
 
-        except KeyError:
-            print(f'\n[Warning] No Style of Name "{style_name}" Found!\n')
-            return (
-                False,
-                const.Brightness.default,
-                const.Contrast.default,
-                const.Saturation.default,
-                const.COLOR.default,
-                const.COLOR.default,
-                const.COLOR.default,
-            )
+        if not style:
+            print(f'\n[Error] No Style of name "{style_name}" was found!\n')
+            return [gr.update()] * 12
 
-    def save_style(self, style_name, latent, bri, con, sat, r, g, b):
-        if style_name in self.STYLE_SHEET["styles"].keys():
-            print(
-                f'\n[Warning] Duplicated Style Name "{style_name}" Detected! Values were not saved!\n'
-            )
+        return (
+            style.get("alt", gr.update()),
+            style.get("brightness", gr.update()),
+            style.get("contrast", gr.update()),
+            style.get("saturation", gr.update()),
+            *style.get("rgb", (gr.update(), gr.update(), gr.update())),
+            style.get("hr", gr.update()),
+            style.get("ad", gr.update()),
+            style.get("rn", gr.update()),
+            style.get("noise", gr.update()),
+            style.get("scaling", gr.update()),
+        )
+
+    def save_style(
+        self,
+        style_name: str,
+        latent: bool,
+        bri: float,
+        con: float,
+        sat: float,
+        r: float,
+        g: float,
+        b: float,
+        hr: bool,
+        ad: bool,
+        rn: bool,
+        noise: str,
+        scaling: str,
+    ):
+        if style_name in self.STYLE_SHEET["styles"]:
+            print(f'\n[Error] Duplicated Style Name: "{style_name}" Detected!')
+            print("Values were not saved!\n")
             return self.list_style()
 
-        style = {
+        new_style = {
             "alt": latent,
             "brightness": bri,
             "contrast": con,
             "saturation": sat,
             "rgb": [r, g, b],
+            "hr": hr,
+            "ad": ad,
+            "rn": rn,
+            "noise": noise,
+            "scaling": scaling,
         }
 
-        self.STYLE_SHEET["styles"].update({style_name: style})
+        self.STYLE_SHEET["styles"].update({style_name: new_style})
 
         with open(STYLE_FILE, "w+") as json_file:
-            json_file.write(json.dumps(self.STYLE_SHEET))
+            json.dump(self.STYLE_SHEET, json_file)
 
         print(f'\nStyle of Name "{style_name}" Saved!\n')
         return self.list_style()
 
-    def delete_style(self, style_name):
-        try:
-            style = self.STYLE_SHEET["styles"][style_name]
-            self.STYLE_SHEET["deleted"].update({style_name: style})
-            del self.STYLE_SHEET["styles"][style_name]
-
-        except KeyError:
-            print(f'\n[Warning] No Style of Name "{style_name}" Found!\n')
+    def delete_style(self, style_name: str):
+        if style_name not in self.STYLE_SHEET["styles"]:
+            print(f'\n[Error] No Style of name "{style_name}" was found!\n')
             return self.list_style()
 
-        with open(STYLE_FILE, "w+") as json_file:
-            json_file.write(json.dumps(self.STYLE_SHEET))
+        style: dict = self.STYLE_SHEET["styles"].get(style_name)
+        self.STYLE_SHEET["deleted"].update({style_name: style})
+        del self.STYLE_SHEET["styles"][style_name]
 
-        print(f'\nStyle of Name "{style_name}" Deleted!\n')
+        with open(STYLE_FILE, "w+") as json_file:
+            json.dump(self.STYLE_SHEET, json_file)
+
+        print(f'\nStyle of name "{style_name}" was deleted!\n')
         return self.list_style()
