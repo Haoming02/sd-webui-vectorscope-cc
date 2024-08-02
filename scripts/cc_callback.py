@@ -2,43 +2,43 @@ from modules.sd_samplers_kdiffusion import KDiffusionSampler
 from modules import script_callbacks, devices
 from scripts.cc_scaling import apply_scaling
 from random import random
-from torch import Tensor
 import torch
 
 
 class NoiseMethods:
     @staticmethod
-    def get_delta(latent: Tensor) -> Tensor:
+    def get_delta(latent: torch.Tensor) -> torch.Tensor:
         mean = torch.mean(latent)
         return torch.sub(latent, mean)
 
     @staticmethod
-    def to_abs(latent: Tensor) -> Tensor:
+    def to_abs(latent: torch.Tensor) -> torch.Tensor:
         return torch.abs(latent)
 
     @staticmethod
-    def zeros(latent: Tensor) -> Tensor:
+    def zeros(latent: torch.Tensor) -> torch.Tensor:
         return torch.zeros_like(latent)
 
     @staticmethod
-    def ones(latent: Tensor) -> Tensor:
+    def ones(latent: torch.Tensor) -> torch.Tensor:
         return torch.ones_like(latent)
 
     @staticmethod
-    def gaussian_noise(latent: Tensor) -> Tensor:
+    def gaussian_noise(latent: torch.Tensor) -> torch.Tensor:
         return torch.rand_like(latent)
 
     @staticmethod
-    def normal_noise(latent: Tensor) -> Tensor:
+    def normal_noise(latent: torch.Tensor) -> torch.Tensor:
         return torch.randn_like(latent)
 
     @staticmethod
+    @torch.inference_mode()
     def multires_noise(
-        latent: Tensor, use_zero: bool, iterations: int = 8, discount: float = 0.4
+        latent: torch.Tensor, use_zero: bool, iterations: int = 8, discount: float = 0.4
     ):
         """
         Credit: Kohya_SS
-        https://github.com/kohya-ss/sd-scripts/blob/main/library/custom_train_functions.py#L453
+        https://github.com/kohya-ss/sd-scripts/blob/v0.8.5/library/custom_train_functions.py#L448
         """
 
         noise = NoiseMethods.zeros(latent) if use_zero else NoiseMethods.ones(latent)
@@ -75,7 +75,7 @@ def RGB_2_CbCr(r: float, g: float, b: float) -> float:
 original_callback = KDiffusionSampler.callback_state
 
 
-@torch.no_grad()
+@torch.inference_mode()
 def cc_callback(self, d):
     if not self.vec_cc["enable"]:
         return original_callback(self, d)

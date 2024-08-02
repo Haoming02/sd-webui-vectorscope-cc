@@ -1,3 +1,6 @@
+### v2.2.1 - 2024 Aug.02
+- `@torch.inference_mode()`
+
 ### v2.2.0 - 2024 Jul.03
 - Add `Adv.` in **Styles Presets**
 - Improve **Consts** Logics *(`internal`)*

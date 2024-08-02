@@ -10,7 +10,7 @@ from random import seed
 import gradio as gr
 
 
-VERSION = "v2.2.0"
+VERSION = "v2.2.1"
 
 
 style_manager = StyleManager()
