@@ -1,4 +1,4 @@
-import modules.scripts as scripts
+from modules import scripts
 
 
 def grid_reference():

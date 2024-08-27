@@ -1,10 +1,9 @@
-import modules.scripts as scripts
+from modules.processing import process_images, get_fixed_seed
+from modules import scripts
+from copy import copy
 import gradio as gr
 import numpy as np
 import cv2 as cv
-
-from modules.processing import process_images, get_fixed_seed
-from copy import copy
 
 
 # https://docs.opencv.org/4.8.0/d2/df0/tutorial_py_hdr.html

@@ -1,16 +1,17 @@
 from modules.sd_samplers_kdiffusion import KDiffusionSampler
 from modules import shared, scripts
 
-from scripts.cc_colorpicker import create_colorpicker
-from scripts.cc_style import StyleManager
-from scripts.cc_xyz import xyz_support
-import scripts.cc_const as const
+from lib_cc.colorpicker import create_colorpicker
+from lib_cc.style import StyleManager
+from lib_cc.xyz import xyz_support
+from lib_cc import const
 
 from random import seed
 import gradio as gr
+import lib_cc
 
 
-VERSION = "v2.2.2"
+VERSION = "v2.2.3"
 
 
 style_manager = StyleManager()

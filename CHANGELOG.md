@@ -1,3 +1,6 @@
+### v2.2.3 - 2024 Aug.27
+- Lib *(`internal`)*
+
 ### v2.2.2 - 2024 Aug.27
 - Fix **Color Picker** for Gradio **4**
 

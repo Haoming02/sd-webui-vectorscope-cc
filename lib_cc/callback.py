@@ -1,11 +1,14 @@
 from modules.sd_samplers_kdiffusion import KDiffusionSampler
 from modules import script_callbacks, devices
-from scripts.cc_scaling import apply_scaling
+from functools import wraps
 from random import random
 import torch
 
+from .scaling import apply_scaling
+
 
 class NoiseMethods:
+
     @staticmethod
     def get_delta(latent: torch.Tensor) -> torch.Tensor:
         mean = torch.mean(latent)
@@ -76,6 +79,7 @@ original_callback = KDiffusionSampler.callback_state
 
 
 @torch.inference_mode()
+@wraps(original_callback)
 def cc_callback(self, d):
     if not self.vec_cc["enable"]:
         return original_callback(self, d)

@@ -1,10 +1,11 @@
-from modules import script_callbacks, shared
+from modules.script_callbacks import on_ui_settings
+from modules.shared import OptionInfo, opts
 
 
-def on_ui_settings():
-    shared.opts.add_option(
+def settings():
+    opts.add_option(
         "cc_metadata",
-        shared.OptionInfo(
+        OptionInfo(
             True,
             "Append Vectorscope CC parameters to generation information",
             section=("infotext", "Infotext"),
@@ -12,4 +13,4 @@ def on_ui_settings():
     )
 
 
-script_callbacks.on_ui_settings(on_ui_settings)
+on_ui_settings(settings)
