@@ -10,7 +10,7 @@ from random import seed
 import gradio as gr
 
 
-VERSION = "v2.2.1"
+VERSION = "v2.2.2"
 
 
 style_manager = StyleManager()
@@ -113,7 +113,7 @@ class VectorscopeCC(scripts.Script):
 
             with gr.Accordion("Styles", open=False):
 
-                with gr.Row():
+                with gr.Row(elem_classes="style-rows"):
                     style_choice = gr.Dropdown(
                         label="Styles", choices=style_manager.list_style(), scale=3
                     )
@@ -122,7 +122,7 @@ class VectorscopeCC(scripts.Script):
                     )
                     refresh_btn = gr.Button(value="Refresh Style", scale=2)
 
-                with gr.Row():
+                with gr.Row(elem_classes="style-rows"):
                     style_name = gr.Textbox(label="Style Name", scale=3)
                     save_btn = gr.Button(
                         value="Save Style", elem_id=f"cc-save-{mode}", scale=2
@@ -133,9 +133,7 @@ class VectorscopeCC(scripts.Script):
                 with gr.Row():
                     doHR = gr.Checkbox(label="Process Hires. fix")
                     doAD = gr.Checkbox(label="Process Adetailer")
-
                     doRN = gr.Checkbox(label="Randomize using Seed")
-                    doRN.do_not_save_to_config = True
 
                 method = gr.Radio(
                     [
@@ -233,12 +231,18 @@ class VectorscopeCC(scripts.Script):
                 reset_btn.click(
                     fn=on_reset,
                     outputs=[*comps],
+                    show_progress="hidden",
                 ).then(
                     None,
                     inputs=[r, g, b],
                     _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
                 )
-                random_btn.click(fn=on_random, outputs=[bri, con, sat, r, g, b]).then(
+
+                random_btn.click(
+                    fn=on_random,
+                    outputs=[bri, con, sat, r, g, b],
+                    show_progress="hidden",
+                ).then(
                     None,
                     inputs=[r, g, b],
                     _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
@@ -257,6 +261,7 @@ class VectorscopeCC(scripts.Script):
             (method, "Vec CC Noise"),
             (doHR, "Vec CC Proc HrF"),
             (doAD, "Vec CC Proc Ade"),
+            (doRN, "Vec CC Seed Randomize"),
             (scaling, "Vec CC Scaling"),
         ]
 

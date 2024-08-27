@@ -79,30 +79,38 @@ class VectorscopeCC {
 
 }
 
-onUiLoaded(async () => {
+onUiLoaded(() => {
 
     ['txt', 'img'].forEach((mode) => {
-        const container = gradioApp().getElementById(`cc-colorwheel-${mode}`);
+        const container = document.getElementById(`cc-colorwheel-${mode}`);
         container.style.height = '200px';
         container.style.width = '200px';
 
-        while (container.firstChild.nodeName.toLowerCase() !== 'img')
-            container.firstChild.remove();
-
         const wheel = container.querySelector('img');
+        container.insertBefore(wheel, container.firstChild);
+
+        while (container.firstChild !== container.lastChild)
+            container.lastChild.remove();
+
         wheel.ondragstart = (e) => { e.preventDefault(); return false; };
         wheel.id = `cc-img-${mode}`;
 
-        sliders = [
-            [gradioApp().getElementById(`cc-r-${mode}`).querySelector('input[type=number]'),
-            gradioApp().getElementById(`cc-r-${mode}`).querySelector('input[type=range]')],
-            [gradioApp().getElementById(`cc-g-${mode}`).querySelector('input[type=number]'),
-            gradioApp().getElementById(`cc-g-${mode}`).querySelector('input[type=range]')],
-            [gradioApp().getElementById(`cc-b-${mode}`).querySelector('input[type=number]'),
-            gradioApp().getElementById(`cc-b-${mode}`).querySelector('input[type=range]')]
+        const sliders = [
+            [
+                document.getElementById(`cc-r-${mode}`).querySelector('input[type=number]'),
+                document.getElementById(`cc-r-${mode}`).querySelector('input[type=range]')
+            ],
+            [
+                document.getElementById(`cc-g-${mode}`).querySelector('input[type=number]'),
+                document.getElementById(`cc-g-${mode}`).querySelector('input[type=range]')
+            ],
+            [
+                document.getElementById(`cc-b-${mode}`).querySelector('input[type=number]'),
+                document.getElementById(`cc-b-${mode}`).querySelector('input[type=range]')
+            ]
         ];
 
-        const temp = gradioApp().getElementById(`cc-temp-${mode}`);
+        const temp = document.getElementById(`cc-temp-${mode}`);
 
         const dot = temp.querySelector('img');
         dot.id = `cc-dot-${mode}`;
@@ -114,14 +122,6 @@ onUiLoaded(async () => {
 
         VectorscopeCC.dot[mode] = dot;
         VectorscopeCC.registerPicker(wheel, sliders, dot);
-
-        const row1 = gradioApp().getElementById(`cc-apply-${mode}`).parentNode;
-        row1.style.alignItems = 'end';
-        row1.style.gap = '1em';
-
-        const row2 = gradioApp().getElementById(`cc-save-${mode}`).parentNode;
-        row2.style.alignItems = 'end';
-        row2.style.gap = '1em';
     });
 
 });

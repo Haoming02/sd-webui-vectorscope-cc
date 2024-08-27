@@ -1,3 +1,6 @@
+### v2.2.2 - 2024 Aug.27
+- Fix **Color Picker** for Gradio **4**
+
 ### v2.2.1 - 2024 Aug.02
 - `@torch.inference_mode()`
 

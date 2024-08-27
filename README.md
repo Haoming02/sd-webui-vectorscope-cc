@@ -2,9 +2,7 @@
 This is an Extension for the [Automatic1111 Webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui), which performs a kind of **Offset Noise** natively,
 allowing you to adjust the brightness, contrast, and color of the generations.
 
-> Also compatible with [Forge](https://github.com/lllyasviel/stable-diffusion-webui-forge)!
-
-> Now supports SDXL!
+> Also supports both old & new [Forge](https://github.com/lllyasviel/stable-diffusion-webui-forge)
 
 > [Sample Images](#sample-images)
 

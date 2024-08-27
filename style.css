@@ -24,12 +24,14 @@
     border-radius: 0.5em;
 }
 
-#vec-cc-txt fieldset>div {
-    gap: 0.2em 0.4em;
+#vec-cc-txt .style-rows {
+    align-items: end;
+    gap: 1em;
 }
 
-#vec-cc-img fieldset>div {
-    gap: 0.2em 0.4em;
+#vec-cc-img .style-rows {
+    align-items: end;
+    gap: 1em;
 }
 
 #vec-hdr-txt label, #vec-hdr-img label {
