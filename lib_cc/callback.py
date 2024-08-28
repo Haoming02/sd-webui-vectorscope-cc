@@ -1,5 +1,5 @@
 from modules.sd_samplers_kdiffusion import KDiffusionSampler
-from modules import script_callbacks, devices
+from modules.script_callbacks import on_script_unloaded
 from functools import wraps
 from random import random
 import torch
@@ -45,19 +45,19 @@ class NoiseMethods:
         """
 
         noise = NoiseMethods.zeros(latent) if use_zero else NoiseMethods.ones(latent)
-        batchSize, c, w, h = noise.shape
+        b, c, w, h = noise.shape
 
-        device = devices.get_optimal_device()
+        device = latent.device
         upsampler = torch.nn.Upsample(size=(w, h), mode="bilinear").to(device)
 
-        for b in range(batchSize):
+        for batch in range(b):
             for i in range(iterations):
                 r = random() * 2 + 2
 
                 wn = max(1, int(w / (r**i)))
                 hn = max(1, int(h / (r**i)))
 
-                noise[b] += (
+                noise[batch] += (
                     upsampler(torch.randn(1, c, hn, wn).to(device)) * discount**i
                 )[0]
 
@@ -67,10 +67,10 @@ class NoiseMethods:
         return noise / noise.std()
 
 
-def RGB_2_CbCr(r: float, g: float, b: float) -> float:
+def RGB_2_CbCr(r: float, g: float, b: float) -> tuple[float, float]:
     """Convert RGB channels into YCbCr for SDXL"""
-    cb = -0.15 * r - 0.29 * g + 0.44 * b
-    cr = 0.44 * r - 0.37 * g - 0.07 * b
+    cb = -0.17 * r - 0.33 * g + 0.5 * b
+    cr = 0.5 * r - 0.41 * g - 0.08 * b
 
     return cb, cr
 
@@ -94,7 +94,8 @@ def cc_callback(self, d):
 
     mode = str(self.vec_cc["mode"])
     method = str(self.vec_cc["method"])
-    source = d[mode]
+    source: torch.Tensor = d[mode]
+    target: torch.Tensor = None
 
     if "Straight" in method:
         target = d[mode].detach().clone()
@@ -175,4 +176,4 @@ def restore_callback():
     KDiffusionSampler.callback_state = original_callback
 
 
-script_callbacks.on_script_unloaded(restore_callback)
+on_script_unloaded(restore_callback)

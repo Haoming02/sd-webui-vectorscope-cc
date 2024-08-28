@@ -1,7 +1,11 @@
 class VectorscopeCC {
 
-    static dot = { 'txt': null, 'img': null };
+    static dot = { 'txt': undefined, 'img': undefined };
 
+    /**
+     * @param {number} r @param {number} g @param {number} b
+     * @param {string} mode "txt" | "img"
+     */
     static updateCursor(r, g, b, mode) {
         const mag = Math.abs(r) + Math.abs(g) + Math.abs(b);
         var condX, condY;
@@ -18,6 +22,11 @@ class VectorscopeCC {
         this.dot[mode].style.top = `calc(50% + ${condY - 12}px)`;
     }
 
+    /**
+     * @param {HTMLImageElement} wheel
+     * @param {HTMLInputElement[]} sliders
+     * @param {HTMLImageElement} dot
+     */
     static registerPicker(wheel, sliders, dot) {
         ['mousemove', 'click'].forEach((event) => {
             wheel.addEventListener(event, (e) => {
@@ -35,20 +44,7 @@ class VectorscopeCC {
                 const x = ((e.clientX - rect.left) - 100.0) / 25;
                 const y = ((e.clientY - rect.top) - 100.0) / 25;
 
-                const zeta = Math.atan(y / x);
-                var degree = 0;
-
-                if (x >= 0) {
-                    if (y >= 0)
-                        degree = zeta * 180 / Math.PI;
-                    else
-                        degree = 360 + zeta * 180 / Math.PI;
-                }
-                else if (x < 0) {
-                    degree = 180 + zeta * 180 / Math.PI;
-                }
-
-                var r = -(0.00077 * (433 * x * degree + 750 * y * degree) / degree);
+                var r = -0.077 * (4.33 * x + 7.5 * y);
                 var g = y / 0.866 + r;
                 var b = x + 0.5 * r + 0.5 * g;
 

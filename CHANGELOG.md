@@ -1,3 +1,7 @@
+### v2.2.4 - 2024 Aug.28
+- Optimization *(`internal`)*
+- Improve Color **Accuracy** ~~Slightly~~
+
 ### v2.2.3 - 2024 Aug.27
 - Lib *(`internal`)*
 

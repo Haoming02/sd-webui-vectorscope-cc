@@ -10,10 +10,10 @@ allowing you to adjust the brightness, contrast, and color of the generations.
 After installing this Extension, you will see a new section in both **txt2img** and **img2img** tabs.
 Refer to the parameters and sample images below and play around with the values.
 
-**Note:** Since this modifies the underlying latent noise, the composition may change drastically.
+> **Note:** Since this modifies the underlying latent noise, the composition may change drastically
 
 #### Parameters
-- **Enable:** Turn on/off this Extension
+- **Enable:** Turn on / off this Extension
 - **Alt:** Modify an alternative Tensor instead, causing the effects to be significantly stronger
 - **Brightness:** Adjust the overall brightness of the image
 - **Contrast:** Adjust the overall contrast of the image

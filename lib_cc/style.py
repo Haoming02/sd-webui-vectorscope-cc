@@ -11,7 +11,7 @@ EMPTY_STYLE = {"styles": {}, "deleted": {}}
 
 class StyleManager:
     def __init__(self):
-        self.STYLE_SHEET = None
+        self.STYLE_SHEET: dict = None
 
     def load_styles(self):
         if os.path.isfile(STYLE_FILE):
@@ -27,10 +27,10 @@ class StyleManager:
 
         return self.list_style()
 
-    def list_style(self):
+    def list_style(self) -> list[str]:
         return list(self.STYLE_SHEET["styles"].keys())
 
-    def get_style(self, style_name: str):
+    def get_style(self, style_name: str) -> tuple[bool | str | float]:
         style: dict = self.STYLE_SHEET["styles"].get(style_name, None)
 
         if not style:

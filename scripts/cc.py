@@ -11,7 +11,7 @@ import gradio as gr
 import lib_cc
 
 
-VERSION = "v2.2.3"
+VERSION = "2.2.4"
 
 
 style_manager = StyleManager()
@@ -19,6 +19,7 @@ style_manager.load_styles()
 
 
 class VectorscopeCC(scripts.Script):
+
     def __init__(self):
         self.xyzCache = {}
         xyz_support(self.xyzCache)
@@ -30,11 +31,11 @@ class VectorscopeCC(scripts.Script):
         return scripts.AlwaysVisible
 
     def ui(self, is_img2img):
-        mode = "img" if is_img2img else "txt"
-        m = f'"{mode}"'
+        mode: str = "img" if is_img2img else "txt"
+        m: str = f'"{mode}"'
 
         with gr.Accordion(
-            f"Vectorscope CC {VERSION}", elem_id=f"vec-cc-{mode}", open=False
+            f"Vectorscope CC v{VERSION}", elem_id=f"vec-cc-{mode}", open=False
         ):
 
             with gr.Row():
@@ -151,13 +152,14 @@ class VectorscopeCC(scripts.Script):
                     label="Noise Settings",
                     value="Straight Abs.",
                 )
+
                 scaling = gr.Radio(
                     ["Flat", "Cos", "Sin", "1 - Cos", "1 - Sin"],
                     label="Scaling Settings",
                     value="Flat",
                 )
 
-            comps = (
+            comps: tuple[gr.components.Component] = (
                 latent,
                 bri,
                 con,
@@ -297,49 +299,40 @@ class VectorscopeCC(scripts.Script):
             enable = self.xyzCache["Enable"].lower().strip() == "true"
 
         if not enable:
-            if "Enable" not in self.xyzCache.keys():
-                if len(self.xyzCache) > 0:
+            if len(self.xyzCache) > 0:
+                if "Enable" not in self.xyzCache.keys():
                     print("\n[Vec.CC] x [X/Y/Z Plot] Extension is not Enabled!\n")
-
                 self.xyzCache.clear()
 
             KDiffusionSampler.vec_cc = {"enable": False}
             return p
 
         if "Random" in self.xyzCache.keys():
+            print("[X/Y/Z Plot] x [Vec.CC] Randomize is Enabled.")
             if len(self.xyzCache) > 1:
-                print(
-                    "\n[X/Y/Z Plot] x [Vec.CC] Randomize is Enabled.\nSome settings will not apply!\n"
-                )
-            else:
-                print("\n[X/Y/Z Plot] x [Vec.CC] Randomize is Enabled.\n")
+                print("Some parameters will not apply!")
 
         cc_seed = int(seeds[0]) if doRN else None
 
-        for k, v in self.xyzCache.items():
-            match k:
-                case "Alt":
-                    latent = self.xyzCache["Alt"].lower().strip() == "true"
-                case "Brightness":
-                    bri = float(v)
-                case "Contrast":
-                    con = float(v)
-                case "Saturation":
-                    sat = float(v)
-                case "R":
-                    r = float(v)
-                case "G":
-                    g = float(v)
-                case "B":
-                    b = float(v)
-                case "DoHR":
-                    doHR = self.xyzCache["DoHR"].lower().strip() == "true"
-                case "Method":
-                    method = str(v)
-                case "Scaling":
-                    scaling = str(v)
-                case "Random":
-                    cc_seed = int(v)
+        if "Alt" in self.xyzCache.keys():
+            latent = self.xyzCache["Alt"].lower().strip() == "true"
+
+        if "DoHR" in self.xyzCache.keys():
+            doHR = self.xyzCache["DoHR"].lower().strip() == "true"
+
+        if "Random" in self.xyzCache.keys():
+            cc_seed = int(self.xyzCache["Random"])
+
+        bri = float(self.xyzCache.get("Brightness", bri))
+        con = float(self.xyzCache.get("Contrast", con))
+        sat = float(self.xyzCache.get("Saturation", sat))
+
+        r = float(self.xyzCache.get("R", r))
+        g = float(self.xyzCache.get("G", g))
+        b = float(self.xyzCache.get("B", b))
+
+        method = str(self.xyzCache.get("Method", method))
+        scaling = str(self.xyzCache.get("Scaling", scaling))
 
         self.xyzCache.clear()
 
@@ -347,11 +340,7 @@ class VectorscopeCC(scripts.Script):
             KDiffusionSampler.vec_cc = {"enable": False}
             return p
 
-        steps: int = p.steps
-        # is img2img & do full steps
-        if not hasattr(p, "enable_hr") and not shared.opts.img2img_fix_steps:
-            if getattr(p, "denoising_strength", 1.0) < 1.0:
-                steps = int(steps * getattr(p, "denoising_strength", 1.0) + 1.0)
+        steps: int = getattr(p, "firstpass_steps", None) or p.steps
 
         if cc_seed:
             seed(cc_seed)
@@ -373,19 +362,24 @@ class VectorscopeCC(scripts.Script):
             print(f"B:\t\t{b}\n")
 
         if getattr(shared.opts, "cc_metadata", True):
-            p.extra_generation_params["Vec CC Enabled"] = enable
-            p.extra_generation_params["Vec CC Alt"] = latent
-            p.extra_generation_params["Vec CC Brightness"] = bri
-            p.extra_generation_params["Vec CC Contrast"] = con
-            p.extra_generation_params["Vec CC Saturation"] = sat
-            p.extra_generation_params["Vec CC R"] = r
-            p.extra_generation_params["Vec CC G"] = g
-            p.extra_generation_params["Vec CC B"] = b
-            p.extra_generation_params["Vec CC Noise"] = method
-            p.extra_generation_params["Vec CC Proc HrF"] = doHR
-            p.extra_generation_params["Vec CC Proc Ade"] = doAD
-            p.extra_generation_params["Vec CC Scaling"] = scaling
-            p.extra_generation_params["Vec CC Version"] = VERSION
+            p.extra_generation_params.update(
+                {
+                    "Vec CC Enabled": enable,
+                    "Vec CC Alt": latent,
+                    "Vec CC Brightness": bri,
+                    "Vec CC Contrast": con,
+                    "Vec CC Saturation": sat,
+                    "Vec CC R": r,
+                    "Vec CC G": g,
+                    "Vec CC B": b,
+                    "Vec CC Noise": method,
+                    "Vec CC Proc HrF": doHR,
+                    "Vec CC Proc Ade": doAD,
+                    "Vec CC Seed Randomize": doRN,
+                    "Vec CC Scaling": scaling,
+                    "Vec CC Version": VERSION,
+                }
+            )
 
         bri /= steps
         con /= steps
@@ -394,7 +388,7 @@ class VectorscopeCC(scripts.Script):
         g /= steps
         b /= steps
 
-        mode = "x" if latent else "denoised"
+        mode: str = "x" if latent else "denoised"
 
         KDiffusionSampler.vec_cc = {
             "enable": True,

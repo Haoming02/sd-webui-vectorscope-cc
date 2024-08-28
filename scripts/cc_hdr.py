@@ -7,16 +7,15 @@ import cv2 as cv
 
 
 # https://docs.opencv.org/4.8.0/d2/df0/tutorial_py_hdr.html
-def merge_HDR(imgs: list, path: str, depth: str, fmt: str, gamma: float):
+def merge_HDR(imgs: list, path: str, depth: str, fmt: str, gamma: float) -> np.ndarray:
     import datetime
     import math
     import os
 
     output_folder = os.path.join(path, "hdr")
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    os.makedirs(output_folder, exist_ok=True)
 
-    imgs_np = [np.array(img, dtype=np.uint8) for img in imgs]
+    imgs_np = [np.asarray(img).astype(np.uint8) for img in imgs]
 
     merge = cv.createMergeMertens()
     hdr = merge.process(imgs_np)
@@ -39,8 +38,11 @@ def merge_HDR(imgs: list, path: str, depth: str, fmt: str, gamma: float):
         rgb,
     )
 
+    return ldr
+
 
 class VectorHDR(scripts.Script):
+
     def title(self):
         return "High Dynamic Range"
 
@@ -49,14 +51,14 @@ class VectorHDR(scripts.Script):
 
     def ui(self, is_img2img):
         with gr.Row():
-            count = gr.Slider(label="Brackets", minimum=3, maximum=9, step=2, value=7)
+            count = gr.Slider(label="Brackets", minimum=3, maximum=9, step=2, value=5)
             gap = gr.Slider(
-                label="Gaps", minimum=0.50, maximum=2.50, step=0.25, value=1.50
+                label="Gaps", minimum=0.50, maximum=2.50, step=0.25, value=1.25
             )
 
         with gr.Accordion(
             "Merge Options",
-            elem_id="vec-hdr-" + ("img" if is_img2img else "txt"),
+            elem_id=f'vec-hdr-{"img" if is_img2img else "txt"}',
             open=False,
         ):
             auto = gr.Checkbox(label="Automatically Merge", value=True)
@@ -85,16 +87,7 @@ class VectorHDR(scripts.Script):
         center = count // 2
 
         p.seed = get_fixed_seed(p.seed)
-        p.scripts.script("vectorscope cc").xyzCache.update(
-            {
-                "Enable": "True",
-                "Alt": "True",
-                "Brightness": 0,
-                "DoHR": "False",
-                "Method": "Ones",
-                "Scaling": "1 - Cos",
-            }
-        )
+        p.scripts.script("vectorscope cc").xyzCache.update({"Enable": "False"})
 
         baseline = process_images(p)
         pc = copy(p)
@@ -109,7 +102,14 @@ class VectorHDR(scripts.Script):
                 continue
 
             pc.scripts.script("vectorscope cc").xyzCache.update(
-                {"Brightness": brackets[it]}
+                {
+                    "Enable": "True",
+                    "Alt": "True",
+                    "Brightness": brackets[it],
+                    "DoHR": "False",
+                    "Method": "Ones",
+                    "Scaling": "1 - Cos",
+                }
             )
 
             proc = process_images(pc)
@@ -117,13 +117,12 @@ class VectorHDR(scripts.Script):
 
         if not auto:
             baseline.images = imgs
-            return baseline
-
         else:
-            merge_HDR(imgs, p.outpath_samples, depth, fmt, gamma)
-            return baseline
+            baseline.images = [merge_HDR(imgs, p.outpath_samples, depth, fmt, gamma)]
+
+        return baseline
 
 
-def brightness_brackets(count, gap):
+def brightness_brackets(count: int, gap: int) -> list[int]:
     half = count // 2
     return [gap * (i - half) for i in range(count)]
