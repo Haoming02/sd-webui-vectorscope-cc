@@ -11,7 +11,7 @@ import gradio as gr
 import lib_cc
 
 
-VERSION = "2.2.4"
+VERSION = "2.2.5"
 
 
 style_manager = StyleManager()

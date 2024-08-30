@@ -22,6 +22,7 @@ Refer to the parameters and sample images below and play around with the values.
 #### Color Channels
 - Comes with a Color Wheel for visualization
 - You can also click and drag on the Color Wheel to select a color directly
+    > The color picker isn't 100% accurate for **SDXL**, due to 3 layers of conversions...
 
 <table>
     <thead align="center">
@@ -234,7 +235,7 @@ hence why you can control the brightness as well as the colors.
 The Extension is named this way because the color interactions remind me of the `Vectorscope` found in **Premiere Pro**'s **Lumetri Color**.
 Those who are experienced in Color Correction should be rather familiar with this Extension.
 
-<p align="center"><img src="scripts/Vectorscope.png" width=256></p>
+<p align="center"><img src="scripts/vectorscope.png" width=256></p>
 
 <sup>~~Yes. I'm aware that it's just how digital colors work in general.~~</sup>
 

@@ -70,7 +70,7 @@ class NoiseMethods:
 def RGB_2_CbCr(r: float, g: float, b: float) -> tuple[float, float]:
     """Convert RGB channels into YCbCr for SDXL"""
     cb = -0.17 * r - 0.33 * g + 0.5 * b
-    cr = 0.5 * r - 0.41 * g - 0.08 * b
+    cr = 0.5 * r - 0.42 * g - 0.08 * b
 
     return cb, cr
 
@@ -150,7 +150,7 @@ def cc_callback(self, d):
 
     else:
         # But why...
-        cb, cr = RGB_2_CbCr(r, b, g)
+        cb, cr = RGB_2_CbCr(r, g, b)
 
         for i in range(batchSize):
             # Brightness
@@ -160,7 +160,7 @@ def cc_callback(self, d):
 
             # CbCr
             source[i][1] -= target[i][1] * cr
-            source[i][2] += target[i][2] * cb
+            source[i][2] -= target[i][2] * cb
 
             # Saturation
             source[i][1] *= sat

@@ -2,7 +2,7 @@ from modules import scripts
 import gradio as gr
 import os
 
-WHEEL = os.path.join(scripts.basedir(), "scripts", "Vectorscope.png")
+WHEEL = os.path.join(scripts.basedir(), "scripts", "vectorscope.png")
 DOT = os.path.join(scripts.basedir(), "scripts", "dot.png")
 
 
