@@ -4,14 +4,14 @@ from modules import shared, scripts
 from lib_cc.colorpicker import create_colorpicker
 from lib_cc.style import StyleManager
 from lib_cc.xyz import xyz_support
+from lib_cc import callback
 from lib_cc import const
 
 from random import seed
 import gradio as gr
-import lib_cc
 
 
-VERSION = "2.2.5"
+VERSION = "2.2.6"
 
 
 style_manager = StyleManager()
@@ -130,6 +130,18 @@ class VectorscopeCC(scripts.Script):
                         value="Save Style", elem_id=f"cc-save-{mode}", scale=2
                     )
                     delete_btn = gr.Button(value="Delete Style", scale=2)
+
+            [
+                setattr(comp, "do_not_save_to_config", True)
+                for comp in (
+                    style_choice,
+                    apply_btn,
+                    refresh_btn,
+                    style_name,
+                    save_btn,
+                    delete_btn,
+                )
+            ]
 
             with gr.Accordion("Advanced Settings", open=False):
                 with gr.Row():
@@ -269,7 +281,8 @@ class VectorscopeCC(scripts.Script):
         ]
 
         for comp, name in self.infotext_fields:
-            comp.do_not_save_to_config = True
+            if getattr(shared.opts, "cc_no_defaults", True):
+                comp.do_not_save_to_config = True
             self.paste_field_names.append(name)
 
         return [enable, *comps]

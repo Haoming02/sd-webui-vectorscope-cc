@@ -1,10 +1,11 @@
 from modules.sd_samplers_kdiffusion import KDiffusionSampler
-from modules.script_callbacks import on_script_unloaded
+from modules.script_callbacks import on_script_unloaded, on_ui_settings
 from functools import wraps
 from random import random
 import torch
 
 from .scaling import apply_scaling
+from .settings import settings
 
 
 class NoiseMethods:
@@ -177,3 +178,4 @@ def restore_callback():
 
 
 on_script_unloaded(restore_callback)
+on_ui_settings(settings)

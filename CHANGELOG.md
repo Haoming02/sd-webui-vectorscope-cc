@@ -1,3 +1,6 @@
+### v2.2.6 - 2024 Sep.18
+- Allow disabling `do_not_save_to_config` to use **Defaults**
+
 ### v2.2.5 - 2024 Aug.30
 - Correct Y'CbCr **Conversion**?
 
