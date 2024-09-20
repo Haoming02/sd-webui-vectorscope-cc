@@ -120,4 +120,18 @@ onUiLoaded(() => {
         VectorscopeCC.registerPicker(wheel, sliders, dot);
     });
 
+    const config = document.getElementById("setting_cc_no_defaults").querySelector('input[type=checkbox]');
+    if (config.checked)
+        return;
+
+    setTimeout(() => {
+        ['txt', 'img'].forEach((mode) => {
+            const r = document.getElementById(`cc-r-${mode}`).querySelector("input").value;
+            const g = document.getElementById(`cc-g-${mode}`).querySelector("input").value;
+            const b = document.getElementById(`cc-b-${mode}`).querySelector("input").value;
+
+            VectorscopeCC.updateCursor(r, g, b, mode);
+        });
+    }, 100);
+
 });

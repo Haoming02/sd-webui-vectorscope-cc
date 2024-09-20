@@ -28,7 +28,7 @@ def settings():
         )
         .needs_reload_ui()
         .info(
-            "Uncheck this option if you wish to use the built-in Defaults function) (enable this option again if the extension is not functioning correctly after an update"
+            "uncheck this option if you wish to use the built-in Defaults function) (enable this option again if the extension is not functioning correctly after an update"
         ),
     )
 

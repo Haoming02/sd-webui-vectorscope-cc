@@ -117,7 +117,7 @@ class VectorscopeCC(scripts.Script):
 
                 with gr.Row(elem_classes="style-rows"):
                     style_choice = gr.Dropdown(
-                        label="Styles", choices=style_manager.list_style(), scale=3
+                        label="CC Styles", choices=style_manager.list_style(), scale=3
                     )
                     apply_btn = gr.Button(
                         value="Apply Style", elem_id=f"cc-apply-{mode}", scale=2
@@ -131,10 +131,12 @@ class VectorscopeCC(scripts.Script):
                     )
                     delete_btn = gr.Button(value="Delete Style", scale=2)
 
+            if getattr(shared.opts, "cc_no_defaults", True):
+                style_choice.do_not_save_to_config = True
+
             [
                 setattr(comp, "do_not_save_to_config", True)
                 for comp in (
-                    style_choice,
                     apply_btn,
                     refresh_btn,
                     style_name,
