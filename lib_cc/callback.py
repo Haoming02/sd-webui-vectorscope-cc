@@ -38,7 +38,10 @@ class NoiseMethods:
     @staticmethod
     @torch.inference_mode()
     def multires_noise(
-        latent: torch.Tensor, use_zero: bool, iterations: int = 8, discount: float = 0.4
+        latent: torch.Tensor,
+        use_zero: bool,
+        iterations: int = 10,
+        discount: float = 0.8,
     ):
         """
         Credit: Kohya_SS
@@ -46,24 +49,21 @@ class NoiseMethods:
         """
 
         noise = NoiseMethods.zeros(latent) if use_zero else NoiseMethods.ones(latent)
-        b, c, w, h = noise.shape
-
         device = latent.device
+
+        b, c, w, h = noise.shape
         upsampler = torch.nn.Upsample(size=(w, h), mode="bilinear").to(device)
 
-        for batch in range(b):
-            for i in range(iterations):
-                r = random() * 2 + 2
+        for i in range(iterations):
+            r = random() * 2 + 2
 
-                wn = max(1, int(w / (r**i)))
-                hn = max(1, int(h / (r**i)))
+            wn = max(1, int(w / (r**i)))
+            hn = max(1, int(h / (r**i)))
 
-                noise[batch] += (
-                    upsampler(torch.randn(1, c, hn, wn).to(device)) * discount**i
-                )[0]
+            noise += upsampler(torch.randn(b, c, wn, hn).to(device)) * discount**i
 
-                if wn == 1 or hn == 1:
-                    break
+            if wn == 1 or hn == 1:
+                break
 
         return noise / noise.std()
 
@@ -79,6 +79,7 @@ def RGB_2_CbCr(r: float, g: float, b: float) -> tuple[float, float]:
 original_callback = KDiffusionSampler.callback_state
 
 
+@torch.no_grad()
 @torch.inference_mode()
 @wraps(original_callback)
 def cc_callback(self, d):
@@ -96,7 +97,7 @@ def cc_callback(self, d):
     mode = str(self.vec_cc["mode"])
     method = str(self.vec_cc["method"])
     source: torch.Tensor = d[mode]
-    target: torch.Tensor = None
+    target = None
 
     if "Straight" in method:
         target = d[mode].detach().clone()
@@ -150,7 +151,6 @@ def cc_callback(self, d):
             source[i][3] *= sat
 
     else:
-        # But why...
         cb, cr = RGB_2_CbCr(r, g, b)
 
         for i in range(batchSize):
@@ -170,12 +170,11 @@ def cc_callback(self, d):
     return original_callback(self, d)
 
 
-KDiffusionSampler.callback_state = cc_callback
-
-
 def restore_callback():
     KDiffusionSampler.callback_state = original_callback
 
 
-on_script_unloaded(restore_callback)
-on_ui_settings(settings)
+def hook_callbacks():
+    KDiffusionSampler.callback_state = cc_callback
+    on_script_unloaded(restore_callback)
+    on_ui_settings(settings)

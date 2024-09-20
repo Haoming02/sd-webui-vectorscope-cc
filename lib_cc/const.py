@@ -2,6 +2,7 @@ import random
 
 
 class Param:
+
     def __init__(self, minimum: float, maximum: float, default: float):
         self.minimum = minimum
         self.maximum = maximum

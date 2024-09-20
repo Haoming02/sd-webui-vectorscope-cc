@@ -10,6 +10,7 @@ EMPTY_STYLE = {"styles": {}, "deleted": {}}
 
 
 class StyleManager:
+
     def __init__(self):
         self.STYLE_SHEET: dict = None
 

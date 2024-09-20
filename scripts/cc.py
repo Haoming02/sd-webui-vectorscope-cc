@@ -2,20 +2,21 @@ from modules.sd_samplers_kdiffusion import KDiffusionSampler
 from modules import shared, scripts
 
 from lib_cc.colorpicker import create_colorpicker
+from lib_cc.callback import hook_callbacks
 from lib_cc.style import StyleManager
 from lib_cc.xyz import xyz_support
-from lib_cc import callback
 from lib_cc import const
 
 from random import seed
 import gradio as gr
 
 
-VERSION = "2.2.6"
+VERSION = "2.3.0"
 
 
 style_manager = StyleManager()
 style_manager.load_styles()
+hook_callbacks()
 
 
 class VectorscopeCC(scripts.Script):
@@ -45,24 +46,24 @@ class VectorscopeCC(scripts.Script):
             with gr.Row():
                 bri = gr.Slider(
                     label="Brightness",
+                    value=const.Brightness.default,
                     minimum=const.Brightness.minimum,
                     maximum=const.Brightness.maximum,
                     step=0.05,
-                    value=const.Brightness.default,
                 )
                 con = gr.Slider(
                     label="Contrast",
+                    value=const.Contrast.default,
                     minimum=const.Contrast.minimum,
                     maximum=const.Contrast.maximum,
                     step=0.05,
-                    value=const.Contrast.default,
                 )
                 sat = gr.Slider(
                     label="Saturation",
+                    value=const.Saturation.default,
                     minimum=const.Saturation.minimum,
                     maximum=const.Saturation.maximum,
                     step=0.05,
-                    value=const.Saturation.default,
                 )
 
             with gr.Row():
@@ -70,46 +71,37 @@ class VectorscopeCC(scripts.Script):
                     r = gr.Slider(
                         label="R",
                         info="Cyan | Red",
+                        value=const.Color.default,
                         minimum=const.Color.minimum,
                         maximum=const.Color.maximum,
                         step=0.05,
-                        value=const.Color.default,
                         elem_id=f"cc-r-{mode}",
                     )
                     g = gr.Slider(
                         label="G",
                         info="Magenta | Green",
+                        value=const.Color.default,
                         minimum=const.Color.minimum,
                         maximum=const.Color.maximum,
                         step=0.05,
-                        value=const.Color.default,
                         elem_id=f"cc-g-{mode}",
                     )
                     b = gr.Slider(
                         label="B",
                         info="Yellow | Blue",
+                        value=const.Color.default,
                         minimum=const.Color.minimum,
                         maximum=const.Color.maximum,
                         step=0.05,
-                        value=const.Color.default,
                         elem_id=f"cc-b-{mode}",
                     )
 
-                r.input(
-                    None,
-                    inputs=[r, g, b],
-                    _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
-                )
-                g.input(
-                    None,
-                    inputs=[r, g, b],
-                    _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
-                )
-                b.input(
-                    None,
-                    inputs=[r, g, b],
-                    _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
-                )
+                for c in (r, g, b):
+                    c.input(
+                        None,
+                        inputs=[r, g, b],
+                        _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
+                    )
 
                 create_colorpicker(is_img2img)
 
@@ -125,7 +117,9 @@ class VectorscopeCC(scripts.Script):
                     refresh_btn = gr.Button(value="Refresh Style", scale=2)
 
                 with gr.Row(elem_classes="style-rows"):
-                    style_name = gr.Textbox(label="Style Name", scale=3)
+                    style_name = gr.Textbox(
+                        label="Style Name", lines=1, max_lines=1, scale=3
+                    )
                     save_btn = gr.Button(
                         value="Save Style", elem_id=f"cc-save-{mode}", scale=2
                     )
@@ -145,12 +139,15 @@ class VectorscopeCC(scripts.Script):
 
             with gr.Accordion("Advanced Settings", open=False):
                 with gr.Row():
-                    doHR = gr.Checkbox(label="Process Hires. fix")
+                    doHR = gr.Checkbox(
+                        label="Process Hires. fix",
+                        visible=(not is_img2img),
+                    )
                     doAD = gr.Checkbox(label="Process Adetailer")
                     doRN = gr.Checkbox(label="Randomize using Seed")
 
                 method = gr.Radio(
-                    [
+                    choices=(
                         "Straight",
                         "Straight Abs.",
                         "Cross",
@@ -160,13 +157,13 @@ class VectorscopeCC(scripts.Script):
                         "U.Random",
                         "Multi-Res",
                         "Multi-Res Abs.",
-                    ],
+                    ),
                     label="Noise Settings",
                     value="Straight Abs.",
                 )
 
                 scaling = gr.Radio(
-                    ["Flat", "Cos", "Sin", "1 - Cos", "1 - Sin"],
+                    choices=("Flat", "Cos", "Sin", "1 - Cos", "1 - Sin"),
                     label="Scaling Settings",
                     value="Flat",
                 )
@@ -188,7 +185,7 @@ class VectorscopeCC(scripts.Script):
 
             apply_btn.click(
                 fn=style_manager.get_style,
-                inputs=style_choice,
+                inputs=[style_choice],
                 outputs=[*comps],
             ).then(
                 None,
@@ -199,18 +196,18 @@ class VectorscopeCC(scripts.Script):
             save_btn.click(
                 fn=lambda *args: gr.update(choices=style_manager.save_style(*args)),
                 inputs=[style_name, *comps],
-                outputs=style_choice,
+                outputs=[style_choice],
             )
 
             delete_btn.click(
                 fn=lambda name: gr.update(choices=style_manager.delete_style(name)),
-                inputs=style_name,
-                outputs=style_choice,
+                inputs=[style_name],
+                outputs=[style_choice],
             )
 
             refresh_btn.click(
-                fn=lambda _: gr.update(choices=style_manager.load_styles()),
-                outputs=style_choice,
+                fn=lambda: gr.update(choices=style_manager.load_styles()),
+                outputs=[style_choice],
             )
 
             with gr.Row():
@@ -248,7 +245,7 @@ class VectorscopeCC(scripts.Script):
                     outputs=[*comps],
                     show_progress="hidden",
                 ).then(
-                    None,
+                    fn=None,
                     inputs=[r, g, b],
                     _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
                 )
@@ -258,7 +255,7 @@ class VectorscopeCC(scripts.Script):
                     outputs=[bri, con, sat, r, g, b],
                     show_progress="hidden",
                 ).then(
-                    None,
+                    fn=None,
                     inputs=[r, g, b],
                     _js=f"(r, g, b) => {{ VectorscopeCC.updateCursor(r, g, b, {m}); }}",
                 )
@@ -308,52 +305,45 @@ class VectorscopeCC(scripts.Script):
         seeds: list[int],
         subseeds: list[int],
     ):
-        if "Enable" in self.xyzCache.keys():
-            enable = self.xyzCache["Enable"].lower().strip() == "true"
+
+        enable = self.xyzCache.pop("Enable", str(enable)).lower().strip() == "true"
 
         if not enable:
             if len(self.xyzCache) > 0:
-                if "Enable" not in self.xyzCache.keys():
-                    print("\n[Vec.CC] x [X/Y/Z Plot] Extension is not Enabled!\n")
+                print("\n[Vec.CC] x [X/Y/Z Plot] Extension is not Enabled!\n")
                 self.xyzCache.clear()
 
-            KDiffusionSampler.vec_cc = {"enable": False}
+            setattr(KDiffusionSampler, "vec_cc", {"enable": False})
+            return p
+
+        method = str(self.xyzCache.pop("Method", method))
+
+        if method == "Disabled":
+            setattr(KDiffusionSampler, "vec_cc", {"enable": False})
             return p
 
         if "Random" in self.xyzCache.keys():
             print("[X/Y/Z Plot] x [Vec.CC] Randomize is Enabled.")
             if len(self.xyzCache) > 1:
-                print("Some parameters will not apply!")
+                print("Some parameters will be overridden!")
 
-        cc_seed = int(seeds[0]) if doRN else None
+            cc_seed = int(self.xyzCache.pop("Random"))
+        else:
+            cc_seed = int(seeds[0]) if doRN else None
 
-        if "Alt" in self.xyzCache.keys():
-            latent = self.xyzCache["Alt"].lower().strip() == "true"
+        latent = self.xyzCache.pop("Alt", str(latent)).lower().strip() == "true"
+        doHR = self.xyzCache.pop("DoHR", str(doHR)).lower().strip() == "true"
+        scaling = str(self.xyzCache.pop("Scaling", scaling))
 
-        if "DoHR" in self.xyzCache.keys():
-            doHR = self.xyzCache["DoHR"].lower().strip() == "true"
+        bri = float(self.xyzCache.pop("Brightness", bri))
+        con = float(self.xyzCache.pop("Contrast", con))
+        sat = float(self.xyzCache.pop("Saturation", sat))
 
-        if "Random" in self.xyzCache.keys():
-            cc_seed = int(self.xyzCache["Random"])
+        r = float(self.xyzCache.pop("R", r))
+        g = float(self.xyzCache.pop("G", g))
+        b = float(self.xyzCache.pop("B", b))
 
-        bri = float(self.xyzCache.get("Brightness", bri))
-        con = float(self.xyzCache.get("Contrast", con))
-        sat = float(self.xyzCache.get("Saturation", sat))
-
-        r = float(self.xyzCache.get("R", r))
-        g = float(self.xyzCache.get("G", g))
-        b = float(self.xyzCache.get("B", b))
-
-        method = str(self.xyzCache.get("Method", method))
-        scaling = str(self.xyzCache.get("Scaling", scaling))
-
-        self.xyzCache.clear()
-
-        if method == "Disabled":
-            KDiffusionSampler.vec_cc = {"enable": False}
-            return p
-
-        steps: int = getattr(p, "firstpass_steps", None) or p.steps
+        assert len(self.xyzCache) == 0
 
         if cc_seed:
             seed(cc_seed)
@@ -366,13 +356,13 @@ class VectorscopeCC(scripts.Script):
             g = const.Color.rand()
             b = const.Color.rand()
 
-            print(f"\n-> Seed: {cc_seed}")
-            print(f"Brightness:\t{bri}")
-            print(f"Contrast:\t{con}")
-            print(f"Saturation:\t{sat}")
-            print(f"R:\t\t{r}")
-            print(f"G:\t\t{g}")
-            print(f"B:\t\t{b}\n")
+            print(f"\n[Seed: {cc_seed}]")
+            print(f"> Brightness:   {bri}")
+            print(f"> Contrast:     {con}")
+            print(f"> Saturation:   {sat}")
+            print(f"> R:            {r}")
+            print(f"> G:            {g}")
+            print(f"> B:            {b}\n")
 
         if getattr(shared.opts, "cc_metadata", True):
             p.extra_generation_params.update(
@@ -394,6 +384,8 @@ class VectorscopeCC(scripts.Script):
                 }
             )
 
+        steps: int = getattr(p, "firstpass_steps", None) or p.steps
+
         bri /= steps
         con /= steps
         sat = pow(sat, 1.0 / steps)
@@ -403,20 +395,32 @@ class VectorscopeCC(scripts.Script):
 
         mode: str = "x" if latent else "denoised"
 
-        KDiffusionSampler.vec_cc = {
-            "enable": True,
-            "mode": mode,
-            "bri": bri,
-            "con": con,
-            "sat": sat,
-            "r": r,
-            "g": g,
-            "b": b,
-            "method": method,
-            "doHR": doHR,
-            "doAD": doAD,
-            "scaling": scaling,
-            "step": steps,
-        }
+        setattr(
+            KDiffusionSampler,
+            "vec_cc",
+            {
+                "enable": True,
+                "mode": mode,
+                "bri": bri,
+                "con": con,
+                "sat": sat,
+                "r": r,
+                "g": g,
+                "b": b,
+                "method": method,
+                "doHR": doHR,
+                "doAD": doAD,
+                "scaling": scaling,
+                "step": steps,
+            },
+        )
+
+        return p
+
+    def before_hr(self, p, enable: bool, *args, **kwargs):
+
+        if enable:
+            steps: int = getattr(p, "hr_second_pass_steps", None) or p.steps
+            KDiffusionSampler.vec_cc["step"] = steps
 
         return p

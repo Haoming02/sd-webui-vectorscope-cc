@@ -13,10 +13,9 @@ def apply_scaling(
     b: float,
 ) -> list:
 
-    if alg == "Flat":
-        mod = 1.0
+    mod = 1.0
 
-    else:
+    if alg != "Flat":
         ratio = float(current_step / total_steps)
         rad = ratio * pi / 2
 

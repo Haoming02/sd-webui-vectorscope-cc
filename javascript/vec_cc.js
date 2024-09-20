@@ -92,26 +92,17 @@ onUiLoaded(() => {
         wheel.id = `cc-img-${mode}`;
 
         const sliders = [
-            [
-                document.getElementById(`cc-r-${mode}`).querySelector('input[type=number]'),
-                document.getElementById(`cc-r-${mode}`).querySelector('input[type=range]')
-            ],
-            [
-                document.getElementById(`cc-g-${mode}`).querySelector('input[type=number]'),
-                document.getElementById(`cc-g-${mode}`).querySelector('input[type=range]')
-            ],
-            [
-                document.getElementById(`cc-b-${mode}`).querySelector('input[type=number]'),
-                document.getElementById(`cc-b-${mode}`).querySelector('input[type=range]')
-            ]
+            document.getElementById(`cc-r-${mode}`).querySelectorAll('input'),
+            document.getElementById(`cc-g-${mode}`).querySelectorAll('input'),
+            document.getElementById(`cc-b-${mode}`).querySelectorAll('input'),
         ];
 
         const temp = document.getElementById(`cc-temp-${mode}`);
 
         const dot = temp.querySelector('img');
-        dot.id = `cc-dot-${mode}`;
         dot.style.left = 'calc(50% - 12px)';
         dot.style.top = 'calc(50% - 12px)';
+        dot.id = `cc-dot-${mode}`;
 
         container.appendChild(dot);
         temp.remove();
