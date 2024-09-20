@@ -133,6 +133,17 @@ Hires upscale: 2, Hires steps: 16, Hires upscaler: 2xNomosUni_esrgan_multijpg
     - *Style that was deleted is still in the `styles.json` in case you wish to retrieve it*
 - Click **Refresh Style** to update the `Dropdown` if you edited the `styles.json` manually
 
+<blockquote>
+    You can also find pre-made Styles by the community available online<br>
+    <ul>
+        <li><b>eg.</b>
+            The <a href="https://raw.githubusercontent.com/sandner-art/Photomatix/refs/heads/main/PX-Vectorscope-CC-Styles/styles.json">Photomatix</a>
+            Styles <i>(right click on the link, click <code>Save link as</code>, then save the <code>.json</code> file into the 
+            <b>sd-webui-vectorscope-cc</b> extension folder)</i>
+        </li>
+    </ul>
+</blockquote>
+
 ### Advanced Parameters
 
 - **Process Hires. fix:** Enable this option to process during the **Hires. fix** phase too
