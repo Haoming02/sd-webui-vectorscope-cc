@@ -1,25 +1,27 @@
 {
-	"prompt": "(masterpiece, best quality), 1girl, solo, night",
-	"negative_prompt": "(low quality, worst quality:1.2)",
-	"seed": -1,
+	"prompt": "a photo of a dog",
+	"negative_prompt": "(low quality, worst quality)",
 	"sampler_name": "Euler a",
 	"sampler_index": "euler",
-	"batch_size": 1,
 	"steps": 24,
-	"cfg_scale": 8.5,
+	"cfg_scale": 6.0,
+	"batch_size": 1,
+	"seed": -1,
 	"width": 512,
 	"height": 512,
 	"alwayson_scripts": {
-		"Vectorscope CC": {
+		"vectorscope cc": {
 			"args": [
 				true,
 				true,
-				-2.0,
+				-2.5,
 				1.5,
-				1.25,
+				0.85,
 				0.0,
 				0.0,
-				0.0,
+				1.0,
+				false,
+				false,
 				false,
 				"Straight Abs.",
 				"Flat"

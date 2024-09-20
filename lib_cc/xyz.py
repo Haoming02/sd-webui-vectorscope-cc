@@ -1,7 +1,7 @@
 from modules import scripts
 
 
-def grid_reference():
+def _grid_reference():
     for data in scripts.scripts_data:
         if data.script_class.__module__ in (
             "scripts.xyz_grid",
@@ -40,7 +40,7 @@ def xyz_support(cache: dict):
     def choices_scaling():
         return ["Flat", "Cos", "Sin", "1 - Cos", "1 - Sin"]
 
-    xyz_grid = grid_reference()
+    xyz_grid = _grid_reference()
 
     extra_axis_options = [
         xyz_grid.AxisOption(

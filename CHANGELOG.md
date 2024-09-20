@@ -1,3 +1,6 @@
+### v2.3.0 - 2024 Sep.20
+- Refactor
+
 ### v2.2.6 - 2024 Sep.18
 - Allow disabling `do_not_save_to_config` to use **Defaults**
 
