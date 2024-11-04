@@ -138,7 +138,7 @@ Hires upscale: 2, Hires steps: 16, Hires upscaler: 2xNomosUni_esrgan_multijpg
     <ul>
         <li><b>eg.</b>
             The <a href="https://raw.githubusercontent.com/sandner-art/Photomatix/refs/heads/main/PX-Vectorscope-CC-Styles/styles.json">Photomatix</a>
-            Styles <i>(right click on the link, click <code>Save link as</code>, then save the <code>.json</code> file into the 
+            Styles <i>(right click on the link, click <code>Save link as</code>, then save the <code>.json</code> file into the
             <b>sd-webui-vectorscope-cc</b> extension folder)</i>
         </li>
     </ul>
@@ -227,6 +227,13 @@ Hires upscale: 1.5, Hires steps: 12, Hires upscaler: 2xNomosUni_esrgan_multijpg
 ### Buttons
 - **Reset:** Reset all `Basic` and `Advanced` parameters to the default values
 - **Randomize:** Randomize the `Brightness`, `Contrast`, `Saturation`, `R`, `G`, `B` parameters
+
+## Settings
+> The following settings are in the **Vectorscope CC** section under the **Stable Diffusion** category of the **Settings** tab
+
+- Append the parameters to the infotext
+- Disable `do_not_save_to_config` to use the Webui **Defaults** functionality
+- Set the `minimum` and `maximum` range for each parameter
 
 ## Roadmap
 - [X] Extension Released!
@@ -323,7 +330,7 @@ In the **Script** `Dropdown` at the bottom, there is now a new **`High Dynamic R
 - This script will generate multiple images *("Brackets")* of varying brightness, then merge them into 1 HDR image
 - **(Recommended)** Use a deterministic sampler and high enough steps. `Euler` *(**not** `Euler a`)* works well in my experience
 
-#### Settings
+#### Options
 - **Brackets:** The numer of images to generate
 - **Gaps:** The brightness difference between each image
 - **Automatically Merge:** When enabled, this will merge the images using an `OpenCV` algorithm and save to the `HDR` folder in the `outputs` folder

@@ -1,5 +1,6 @@
 from modules.sd_samplers_kdiffusion import KDiffusionSampler
-from modules import shared, scripts
+from modules.shared import opts
+from modules import scripts
 
 from lib_cc.colorpicker import create_colorpicker
 from lib_cc.callback import hook_callbacks
@@ -11,12 +12,13 @@ from random import seed
 import gradio as gr
 
 
-VERSION = "2.3.0"
+VERSION = "2.3.1"
 
 
 style_manager = StyleManager()
 style_manager.load_styles()
 hook_callbacks()
+const.init()
 
 
 class VectorscopeCC(scripts.Script):
@@ -125,7 +127,7 @@ class VectorscopeCC(scripts.Script):
                     )
                     delete_btn = gr.Button(value="Delete Style", scale=2)
 
-            if getattr(shared.opts, "cc_no_defaults", True):
+            if getattr(opts, "cc_no_defaults", True):
                 style_choice.do_not_save_to_config = True
 
             [
@@ -280,7 +282,7 @@ class VectorscopeCC(scripts.Script):
         ]
 
         for comp, name in self.infotext_fields:
-            if getattr(shared.opts, "cc_no_defaults", True):
+            if getattr(opts, "cc_no_defaults", True):
                 comp.do_not_save_to_config = True
             self.paste_field_names.append(name)
 
@@ -366,7 +368,7 @@ class VectorscopeCC(scripts.Script):
             print(f"> G:            {g}")
             print(f"> B:            {b}\n")
 
-        if getattr(shared.opts, "cc_metadata", True):
+        if getattr(opts, "cc_metadata", True):
             p.extra_generation_params.update(
                 {
                     "Vec CC Enabled": enable,

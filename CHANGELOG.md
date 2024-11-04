@@ -1,3 +1,6 @@
+### v2.3.1 - 2024 Nov.04
+- Implement **Range** Settings
+
 ### v2.3.0 - 2024 Sep.20
 - Refactor
 

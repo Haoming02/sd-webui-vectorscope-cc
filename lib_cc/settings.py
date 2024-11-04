@@ -1,6 +1,7 @@
 from modules.shared import OptionInfo, opts
 from modules import scripts
 from json import load, dump
+from gradio import Slider
 import os
 
 section = ("cc", "Vectorscope CC")
@@ -11,7 +12,7 @@ def settings():
         "cc_metadata",
         OptionInfo(
             True,
-            "Append Vectorscope CC parameters to generation information",
+            "Append Vectorscope CC parameters to generation infotext",
             section=section,
             category_id="sd",
         ),
@@ -26,11 +27,41 @@ def settings():
             category_id="sd",
             onchange=reset_ui_config,
         )
-        .needs_reload_ui()
-        .info(
-            "uncheck this option if you wish to use the built-in Defaults function) (enable this option again if the extension is not functioning correctly after an update"
-        ),
+        .info("uncheck this option if you wish to use the built-in Defaults function")
+        .info("enable again if the extension is not working correctly after an update")
+        .needs_reload_ui(),
     )
+
+    for lbl, minVal, maxVal in [
+        ("Brightness", (-5.0, 0.0), (0.0, 5.0)),
+        ("Contrast", (-5.0, 0.0), (0.0, 5.0)),
+        ("Saturation", (0.25, 1.0), (1.0, 1.75)),
+        ("Color", (-4.0, 0.0), (0.0, 4.0)),
+    ]:
+
+        opts.add_option(
+            f"cc_{lbl.lower()}_min",
+            OptionInfo(
+                minVal[0],
+                f"{lbl} - Min",
+                Slider,
+                {"step": 0.05, "minimum": minVal[0], "maximum": minVal[1]},
+                section=section,
+                category_id="sd",
+            ).needs_reload_ui(),
+        )
+
+        opts.add_option(
+            f"cc_{lbl.lower()}_max",
+            OptionInfo(
+                maxVal[1],
+                f"{lbl} - Max",
+                Slider,
+                {"step": 0.05, "minimum": maxVal[0], "maximum": maxVal[1]},
+                section=section,
+                category_id="sd",
+            ).needs_reload_ui(),
+        )
 
 
 def reset_ui_config():
