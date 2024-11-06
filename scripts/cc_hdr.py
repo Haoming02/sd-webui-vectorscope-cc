@@ -7,7 +7,7 @@ import numpy as np
 import cv2 as cv
 
 
-def _merge_HDR(imgs: list, path: str, depth: str, fmt: str, gamma: float):
+def mergeHDR(imgs: list, path: str, depth: str, fmt: str, gamma: float):
     """https://docs.opencv.org/4.8.0/d2/df0/tutorial_py_hdr.html"""
 
     import datetime
@@ -131,7 +131,7 @@ class VectorHDR(scripts.Script):
             imgs[it] = proc.images[0]
 
         if auto:
-            _merge_HDR(imgs, p.outpath_samples, depth, fmt, gamma)
+            mergeHDR(imgs, p.outpath_samples, depth, fmt, gamma)
 
         baseline.images = imgs
         return baseline

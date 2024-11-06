@@ -1,3 +1,6 @@
+### v2.3.2 - 2024 Nov.06
+- Linting *(`internal`)*
+
 ### v2.3.1 - 2024 Nov.04
 - Implement **Range** Settings
 

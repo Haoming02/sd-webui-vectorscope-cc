@@ -13,10 +13,10 @@ class Param:
         return round(random.uniform(self.minimum, self.maximum), 2)
 
 
-Brightness: Param = None
-Contrast: Param = None
-Saturation: Param = None
-Color: Param = None
+Brightness: Param
+Contrast: Param
+Saturation: Param
+Color: Param
 
 
 def init():

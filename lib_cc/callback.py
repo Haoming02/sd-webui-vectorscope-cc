@@ -68,7 +68,7 @@ class NoiseMethods:
         return noise / noise.std()
 
 
-def RGB_2_CbCr(r: float, g: float, b: float) -> tuple[float, float]:
+def RGB2CbCr(r: float, g: float, b: float) -> tuple[float, float]:
     """Convert RGB channels into YCbCr for SDXL"""
     cb = -0.17 * r - 0.33 * g + 0.5 * b
     cr = 0.5 * r - 0.42 * g - 0.08 * b
@@ -151,7 +151,7 @@ def cc_callback(self, d):
             source[i][3] *= sat
 
     else:
-        cb, cr = RGB_2_CbCr(r, g, b)
+        cb, cr = RGB2CbCr(r, g, b)
 
         for i in range(batchSize):
             # Brightness

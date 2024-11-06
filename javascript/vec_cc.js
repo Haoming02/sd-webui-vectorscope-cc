@@ -8,7 +8,7 @@ class VectorscopeCC {
      */
     static updateCursor(r, g, b, mode) {
         const mag = Math.abs(r) + Math.abs(g) + Math.abs(b);
-        var condX, condY;
+        let condX, condY;
 
         if (mag < Number.EPSILON) {
             condX = 0.0;
@@ -44,9 +44,9 @@ class VectorscopeCC {
                 const x = ((e.clientX - rect.left) - 100.0) / 25;
                 const y = ((e.clientY - rect.top) - 100.0) / 25;
 
-                var r = -0.077 * (4.33 * x + 7.5 * y);
-                var g = y / 0.866 + r;
-                var b = x + 0.5 * r + 0.5 * g;
+                let r = -0.077 * (4.33 * x + 7.5 * y);
+                let g = y / 0.866 + r;
+                let b = x + 0.5 * r + 0.5 * g;
 
                 const mag = Math.sqrt(r * r + g * g + b * b);
                 const len = Math.abs(r) + Math.abs(g) + Math.abs(b);

@@ -5,14 +5,13 @@ import os
 
 
 STYLE_FILE = os.path.join(scripts.basedir(), "styles.json")
-
 EMPTY_STYLE = {"styles": {}, "deleted": {}}
 
 
 class StyleManager:
 
     def __init__(self):
-        self.STYLE_SHEET: dict = None
+        self.STYLE_SHEET: dict = {}
 
     def load_styles(self):
         if os.path.isfile(STYLE_FILE):
