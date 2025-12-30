@@ -1,3 +1,6 @@
+### v2.4.0 - 2025 Dec.30
+- Implement Randomize for **Noise** and **Scaling**
+
 ### v2.3.2 - 2024 Nov.06
 - Linting *(`internal`)*
 

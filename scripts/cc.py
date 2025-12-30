@@ -2,6 +2,7 @@ from modules.sd_samplers_kdiffusion import KDiffusionSampler
 from modules.shared import opts
 from modules import scripts
 
+from lib_cc.const import rand_method, rand_scaling
 from lib_cc.colorpicker import create_colorpicker
 from lib_cc.callback import hook_callbacks
 from lib_cc.style import StyleManager
@@ -12,7 +13,7 @@ from random import seed
 import gradio as gr
 
 
-VERSION = "2.3.2"
+VERSION = "2.4.0"
 
 
 style_manager = StyleManager()
@@ -242,6 +243,8 @@ class VectorscopeCC(scripts.Script):
                         gr.update(value=const.Color.rand()),
                         gr.update(value=const.Color.rand()),
                         gr.update(value=const.Color.rand()),
+                        rand_method(),
+                        rand_scaling(),
                     ]
 
                 reset_btn.click(
@@ -256,7 +259,7 @@ class VectorscopeCC(scripts.Script):
 
                 random_btn.click(
                     fn=on_random,
-                    outputs=[bri, con, sat, r, g, b],
+                    outputs=[bri, con, sat, r, g, b, method, scaling],
                     show_progress="hidden",
                 ).then(
                     fn=None,
@@ -360,13 +363,23 @@ class VectorscopeCC(scripts.Script):
             g = const.Color.rand()
             b = const.Color.rand()
 
-            print(f"\n[Seed: {cc_seed}]")
+            print(f"\n\n[Seed: {cc_seed}]")
             print(f"> Brightness:   {bri}")
             print(f"> Contrast:     {con}")
             print(f"> Saturation:   {sat}")
             print(f"> R:            {r}")
             print(f"> G:            {g}")
-            print(f"> B:            {b}\n")
+            print(f"> B:            {b}")
+
+            if getattr(opts, "cc_rand_method", False):
+                method = rand_method(orig=method)
+                print(f"> Noise:        {method}")
+
+            if getattr(opts, "cc_rand_scaling", False):
+                scaling = rand_method(orig=scaling)
+                print(f"> Scaling:      {scaling}")
+
+            print("\n")
 
         if getattr(opts, "cc_metadata", True):
             p.extra_generation_params.update(

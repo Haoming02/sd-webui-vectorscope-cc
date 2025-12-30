@@ -232,7 +232,8 @@ Hires upscale: 1.5, Hires steps: 12, Hires upscaler: 2xNomosUni_esrgan_multijpg
 > The following settings are in the **Vectorscope CC** section under the **Stable Diffusion** category of the **Settings** tab
 
 - Append the parameters to the infotext
-- Disable `do_not_save_to_config` to use the Webui **Defaults** functionality
+- Disable `do_not_save_to_config` to use the Webui's **Defaults** feature
+- Also randomize the **Noise** and **Scaling** settings
 - Set the `minimum` and `maximum` range for each parameter
 
 ## Roadmap
@@ -331,7 +332,7 @@ In the **Script** `Dropdown` at the bottom, there is now a new **`High Dynamic R
 - **(Recommended)** Use a deterministic sampler and high enough steps. `Euler` *(**not** `Euler a`)* works well in my experience
 
 #### Options
-- **Brackets:** The numer of images to generate
+- **Brackets:** The number of images to generate
 - **Gaps:** The brightness difference between each image
 - **Automatically Merge:** When enabled, this will merge the images using an `OpenCV` algorithm and save to the `HDR` folder in the `outputs` folder
     - Disable this if you want to merge them yourself using better external program

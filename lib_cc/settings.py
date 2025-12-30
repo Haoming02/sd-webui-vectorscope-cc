@@ -27,9 +27,29 @@ def settings():
             category_id="sd",
             onchange=reset_ui_config,
         )
-        .info("uncheck this option if you wish to use the built-in Defaults function")
+        .info("disable this option if you wish to use the built-in Defaults feature")
         .info("enable again if the extension is not working correctly after an update")
         .needs_reload_ui(),
+    )
+
+    opts.add_option(
+        "cc_rand_method",
+        OptionInfo(
+            False,
+            "Randomize the Noise Settings as well",
+            section=section,
+            category_id="sd",
+        ),
+    )
+
+    opts.add_option(
+        "cc_rand_scaling",
+        OptionInfo(
+            False,
+            "Randomize the Scaling Settings as well",
+            section=section,
+            category_id="sd",
+        ),
     )
 
     for lbl, minVal, maxVal in [
